@@ -12,7 +12,7 @@ const ImportantDates = ({ data }: any) => {
 
   return (
     <Box>
-      <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 0.5 }}>
+      <Typography sx={{ fontSize: 14, fontWeight: 500, mb: 0.5 }}>
         Important IPO Dates
       </Typography>
 

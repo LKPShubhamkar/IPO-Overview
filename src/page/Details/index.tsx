@@ -9,7 +9,7 @@ import SharesOnOffer from "./SharesOnOffer";
 import SubscriptionData from "./SubscriptionData";
 import InformationOnIssue from "./InformationOnIssue";
 import FinancialOverview from "./FinancialOverview";
-import IpoReports from "./IpoReports";
+// import IpoReports from "./IpoReports";
 import { fetchIpoDetailApi } from "../../services/api";
 
 const Details = () => {
@@ -134,7 +134,7 @@ const Details = () => {
             <FinancialOverview data={data.financials} />
           </Box>
 
-          <IpoReports />
+          {/* <IpoReports /> */}
         </Box>
       </Box>
     </Box>

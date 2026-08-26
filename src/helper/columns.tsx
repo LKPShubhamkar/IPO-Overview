@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
-export const ongoingColumns = (navigate) => [
+export const ongoingColumns = (navigate: any) => [
   {
     key: "company_name",
     label: "Company Name",

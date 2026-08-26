@@ -5,7 +5,7 @@ const SubscriptionData = ({ data }: any) => {
 
   return (
     <Box>
-      <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 0.5 }}>
+      <Typography sx={{ fontSize: 14, fontWeight: 500, mb: 0.5 }}>
         Subscription Data
       </Typography>
 
@@ -29,7 +29,6 @@ const SubscriptionData = ({ data }: any) => {
           <Header text="Non Institutional Investor" />
           <Header text="Qualified Institutional Buyers" />
         </Box>
-
         {rows.map((row: any) => (
           <Box
             key={row.modified}
@@ -41,20 +40,20 @@ const SubscriptionData = ({ data }: any) => {
               borderBottom: "1px solid #eee",
             }}
           >
-            <Typography sx={{ fontSize: 9 }}>
+            <Typography sx={{ fontSize: 12 }}>
               {row.day}
               {/* {row.day?.replace("<br>", " ")} */}
             </Typography>
 
-            <Typography sx={{ fontSize: 9 }}>
+            <Typography sx={{ fontSize: 12 }}>
               {row.retail_individual_investor}x
             </Typography>
 
-            <Typography sx={{ fontSize: 9 }}>
+            <Typography sx={{ fontSize: 12 }}>
               {row.non_institutional_investor}x
             </Typography>
 
-            <Typography sx={{ fontSize: 9 }}>
+            <Typography sx={{ fontSize: 12 }}>
               {row.qualified_institutional_buyers}x
             </Typography>
           </Box>
@@ -65,7 +64,7 @@ const SubscriptionData = ({ data }: any) => {
 };
 
 const Header = ({ text }: any) => (
-  <Typography sx={{ fontSize: 8, color: "#999" }}>{text}</Typography>
+  <Typography sx={{ fontSize: 10, color: "#999" }}>{text}</Typography>
 );
 
 export default SubscriptionData;

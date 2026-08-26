@@ -1,7 +1,8 @@
 import { Box, Modal } from "@mui/material";
 import ApplyModal from "./Apply/Apply";
+import Cancel from "./Cancelled/cancel";
 
-const CommonModal = ({ open, onClose, type, size = "md" }) => {
+const CommonModal = ({ open, onClose, type, size = "md" }: any) => {
   const getWidth = () => {
     switch (size) {
       case "sm":
@@ -22,14 +23,16 @@ const CommonModal = ({ open, onClose, type, size = "md" }) => {
       case "apply":
         return <ApplyModal />;
 
-      case "details":
-        return <div>Details Content</div>;
-
-      case "success":
-        return <div>Success Content</div>;
-
-      case "confirm":
-        return <div>Confirm Content</div>;
+      case "cancel":
+        return (
+          <Cancel
+            onClose={onClose}
+            onConfirm={() => {
+              console.log("Cancel IPO confirmed");
+              onClose();
+            }}
+          />
+        );
 
       default:
         return null;
@@ -46,12 +49,11 @@ const CommonModal = ({ open, onClose, type, size = "md" }) => {
           transform: "translate(-50%, -50%)",
           width: getWidth(),
           maxWidth: "90%",
-          maxHeight: "50vh",
           overflowY: "auto",
           bgcolor: "#fff",
           borderRadius: "8px",
           boxShadow: 24,
-          p: 3,
+          p: 0,
         }}
       >
         {renderContent()}

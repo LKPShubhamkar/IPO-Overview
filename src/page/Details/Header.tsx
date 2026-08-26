@@ -5,7 +5,7 @@ const Header = ({ data }: any) => {
     <Box
       sx={{
         backgroundColor: "#fff",
-        borderRadius: 1,
+        borderRadius: 2,
         px: 1.5,
         py: 1,
         display: "flex",
@@ -19,8 +19,8 @@ const Header = ({ data }: any) => {
           src={data?.company_logo}
           alt={data?.company_name}
           sx={{
-            width: 32,
-            height: 32,
+            width: 40,
+            height: 40,
             objectFit: "contain",
           }}
         />
@@ -28,7 +28,7 @@ const Header = ({ data }: any) => {
         <Box>
           <Typography
             sx={{
-              fontSize: 12,
+              fontSize: 15,
               fontWeight: 500,
               color: "#353844",
             }}
@@ -38,7 +38,7 @@ const Header = ({ data }: any) => {
 
           <Typography
             sx={{
-              fontSize: 9,
+              fontSize: 9.5,
               color: "#3aaa55",
               backgroundColor: "#eaf8ed",
               width: "fit-content",

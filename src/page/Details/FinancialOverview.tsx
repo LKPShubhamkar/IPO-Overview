@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 const FinancialOverview = ({ data }: any) => {
   return (
     <Box>
-      <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 0.5 }}>
+      <Typography sx={{ fontSize: 14, fontWeight: 500, mb: 0.5 }}>
         Financial Overview
       </Typography>
 
@@ -17,7 +17,7 @@ const FinancialOverview = ({ data }: any) => {
           "& table": {
             width: "100%",
             borderCollapse: "collapse",
-            fontSize: "9px",
+            fontSize: "12px",
           },
 
           "& td": {

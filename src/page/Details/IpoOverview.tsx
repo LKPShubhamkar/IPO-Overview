@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 const IpoOverview = ({ data }: any) => {
   return (
     <Box>
-      <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 0.5 }}>
+      <Typography sx={{ fontSize: 14, fontWeight: 500, mb: 0.5 }}>
         IPO Details
       </Typography>
 
@@ -15,13 +15,13 @@ const IpoOverview = ({ data }: any) => {
           backgroundColor: "#fff",
         }}
       >
-        <Box sx={{ display: "flex", gap: 2, mb: 1 }}>
+        {/* <Box sx={{ display: "flex", gap: 2, mb: 1 }}>
           <Typography sx={{ fontSize: 11, color: "#0066b3", fontWeight: 500 }}>
             Retail
           </Typography>
 
           <Typography sx={{ fontSize: 11, color: "#999" }}>HNI</Typography>
-        </Box>
+        </Box> */}
 
         <Box
           sx={{

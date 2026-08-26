@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@mui/material";
 
-const CustomTable = ({ columns, rows, getRowId }) => {
+const CustomTable = ({ columns, rows, getRowId }: any) => {
   return (
     <TableContainer
       component={Paper}

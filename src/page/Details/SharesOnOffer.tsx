@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 const SharesOnOffer = ({ data }: any) => {
   return (
     <Box>
-      <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 0.5 }}>
+      <Typography sx={{ fontSize: 14, fontWeight: 500, mb: 0.5 }}>
         Number of Shares on Offer
       </Typography>
 
@@ -56,11 +56,11 @@ const Row = ({ label, value, bold }: any) => {
         py: 0.45,
       }}
     >
-      <Typography sx={{ fontSize: 9, color: "#999" }}>{label}</Typography>
+      <Typography sx={{ fontSize: 11, color: "#999" }}>{label}</Typography>
 
       <Typography
         sx={{
-          fontSize: 10,
+          fontSize: 12,
           color: bold ? "#0066b3" : "#454545",
           fontWeight: bold ? 500 : 400,
         }}

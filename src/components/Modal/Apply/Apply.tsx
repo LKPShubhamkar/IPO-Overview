@@ -19,8 +19,7 @@ const Apply = () => {
       {/* Header */}
       <Box
         sx={{
-          px: 2,
-          pt: 1,
+          p: 2,
           borderBottom: "1px solid #e5e5e5",
         }}
       >

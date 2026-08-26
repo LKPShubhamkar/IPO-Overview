@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 const InformationOnIssue = ({ data }: any) => {
   return (
     <Box>
-      <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 0.5 }}>
+      <Typography sx={{ fontSize: 14, fontWeight: 500, mb: 0.5 }}>
         Information on Issue
       </Typography>
 
@@ -14,13 +14,13 @@ const InformationOnIssue = ({ data }: any) => {
           p: 1.5,
         }}
       >
-        <Typography sx={{ fontSize: 11, fontWeight: 500 }}>
+        <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
           About the Company
         </Typography>
 
         <Typography
           sx={{
-            fontSize: 9,
+            fontSize: 10,
             color: "#999",
             lineHeight: 1.5,
             mt: 0.5,
@@ -31,13 +31,13 @@ const InformationOnIssue = ({ data }: any) => {
 
         <Box sx={{ borderTop: "1px solid #eee", my: 1 }} />
 
-        <Typography sx={{ fontSize: 11, fontWeight: 500 }}>
+        <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
           Object of the Issue
         </Typography>
 
         <Box
           sx={{
-            fontSize: 9,
+            fontSize: 10,
             color: "#999",
             lineHeight: 1.5,
             mt: 0.5,
@@ -48,7 +48,7 @@ const InformationOnIssue = ({ data }: any) => {
 
         <Box sx={{ borderTop: "1px solid #eee", my: 1 }} />
 
-        <Typography sx={{ fontSize: 11, fontWeight: 500 }}>
+        <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
           Promoters
         </Typography>
 
@@ -56,7 +56,7 @@ const InformationOnIssue = ({ data }: any) => {
           <Typography
             key={promoter}
             sx={{
-              fontSize: 9,
+              fontSize: 10,
               color: "#999",
               mt: 0.5,
             }}
