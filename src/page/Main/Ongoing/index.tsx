@@ -35,7 +35,7 @@ const Ongoing = ({ data }: any) => {
             onAction={handleAction}
             actionLabel="Apply Now"
             showAction={true}
-            statusLabel={item.day || "Day 1"}
+            statusLabel={item.day || "Ongoing"}
           />
         ))
       ) : (

@@ -60,6 +60,9 @@ const Header = ({ data }: any) => {
           fontSize: 11,
           px: 3,
         }}
+        onClick={() => {
+          console.log("open modal apply clicked");
+        }}
       >
         Apply IPO
       </Button>

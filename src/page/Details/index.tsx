@@ -87,12 +87,16 @@ const Details = () => {
   }
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box
+      sx={{
+        p: { xs: 1, sm: 2 },
+      }}
+    >
       <Button
         onClick={() => navigate(-1)}
         sx={{
           textTransform: "none",
-          mb: 2,
+          mb: { xs: 1, sm: 2 },
         }}
       >
         Back
@@ -100,7 +104,7 @@ const Details = () => {
 
       <Box
         sx={{
-          p: 1,
+          p: { xs: 0.5, sm: 1 },
           backgroundColor: "#f5f5f5",
         }}
       >
@@ -108,8 +112,8 @@ const Details = () => {
 
         <Box
           sx={{
-            mt: 1,
-            p: 1,
+            mt: { xs: 0.5, sm: 1 },
+            p: { xs: 0.5, sm: 1 },
             backgroundColor: "#fff",
             borderRadius: 1,
           }}
@@ -117,8 +121,18 @@ const Details = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 1.5,
+
+              // Mobile → one below another
+              // Desktop → two columns
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr 1fr",
+              },
+
+              gap: {
+                xs: 1,
+                sm: 1.5,
+              },
             }}
           >
             <IpoOverview data={data.company_ipo_overview} />
@@ -133,8 +147,6 @@ const Details = () => {
 
             <FinancialOverview data={data.financials} />
           </Box>
-
-          {/* <IpoReports /> */}
         </Box>
       </Box>
     </Box>
