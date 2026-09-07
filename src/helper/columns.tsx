@@ -160,7 +160,7 @@ export const ongoingColumns = (navigate: any) => [
   },
 ];
 
-const isPreApplyEligible = (openDate) => {
+const isPreApplyEligible = (openDate: any) => {
   if (!openDate) return false;
 
   const today = new Date();
@@ -174,7 +174,7 @@ const isPreApplyEligible = (openDate) => {
 
   return diffInDays >= 1 && diffInDays <= 2;
 };
-export const upcomingColumns = (navigate) => [
+export const upcomingColumns = (navigate: any) => [
   {
     key: "company_name",
     label: "Company Name",

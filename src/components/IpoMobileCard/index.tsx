@@ -6,7 +6,7 @@ const IpoMobileCard = ({
   actionLabel = "Apply Now",
   statusLabel,
   showAction = true,
-}) => {
+}: any) => {
   const issueSize = item.issue_size
     ? `${(item.issue_size / 10000000).toFixed(2)} Cr`
     : "-";

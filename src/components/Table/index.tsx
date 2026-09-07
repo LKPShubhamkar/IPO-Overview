@@ -34,7 +34,7 @@ const CustomTable = ({ columns, rows, getRowId }: any) => {
               borderBottom: "1px solid #e8e8e8",
             }}
           >
-            {columns.map((column) => (
+            {columns.map((column: any) => (
               <TableCell
                 key={column.key}
                 sx={{
@@ -54,7 +54,7 @@ const CustomTable = ({ columns, rows, getRowId }: any) => {
         </TableHead>
 
         <TableBody>
-          {rows.map((row) => (
+          {rows.map((row: any) => (
             <TableRow
               key={getRowId(row)}
               sx={{
@@ -65,7 +65,7 @@ const CustomTable = ({ columns, rows, getRowId }: any) => {
                 },
               }}
             >
-              {columns.map((column) => (
+              {columns.map((column: any) => (
                 <TableCell
                   key={column.key}
                   sx={{

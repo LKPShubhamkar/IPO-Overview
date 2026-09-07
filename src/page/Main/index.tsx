@@ -24,11 +24,11 @@ const MainLayout = () => {
   }, []);
 
   const ongoingData = data?.upcoming_open?.filter(
-    (item) => item.is_open_now === true,
+    (item: any) => item.is_open_now === true,
   );
 
   const upcomingData = data?.upcoming_open?.filter(
-    (item) => item.is_open_now === false,
+    (item: any) => item.is_open_now === false,
   );
 
   const tabs = [
