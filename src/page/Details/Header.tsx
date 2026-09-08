@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 
-const Header = ({ data }: any) => {
+const Header = ({ data, onApply }: any) => {
   return (
     <Box
       sx={{
@@ -60,9 +60,7 @@ const Header = ({ data }: any) => {
           fontSize: 11,
           px: 3,
         }}
-        onClick={() => {
-          console.log("open modal apply clicked");
-        }}
+        onClick={onApply}
       >
         Apply IPO
       </Button>

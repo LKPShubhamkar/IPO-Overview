@@ -11,6 +11,7 @@ import InformationOnIssue from "./InformationOnIssue";
 import FinancialOverview from "./FinancialOverview";
 // import IpoReports from "./IpoReports";
 import { fetchIpoDetailApi } from "../../services/api";
+import CommonModal from "../../components/Modal";
 
 const Details = () => {
   const location = useLocation();
@@ -21,6 +22,7 @@ const Details = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const getIpoDetails = async () => {
@@ -108,7 +110,7 @@ const Details = () => {
           backgroundColor: "#f5f5f5",
         }}
       >
-        <Header data={data.company_headers} />
+        <Header data={data.company_headers} onApply={() => setOpen(true)} />
 
         <Box
           sx={{
@@ -149,6 +151,13 @@ const Details = () => {
           </Box>
         </Box>
       </Box>
+      <CommonModal
+        open={open}
+        onClose={() => setOpen(false)}
+        size="md"
+        type="apply"
+        data={data}
+      />
     </Box>
   );
 };

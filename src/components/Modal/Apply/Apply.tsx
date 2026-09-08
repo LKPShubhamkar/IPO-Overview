@@ -1,21 +1,104 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, IconButton, Tab, Tabs, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { IpoClientDetailsApi, PlaceIpoOrderApi } from "../../../services/api";
 
-const Apply = () => {
-  const [tab, setTab] = useState("retail");
+const Apply = ({ data, onClose }: any) => {
+  // const [tab, setTab] = useState("retail");
   const [lots, setLots] = useState(1);
+  const [clientDetails, setClientDetails] = useState(null);
 
-  const lotSize = 50;
-  const bidPrice = 294;
-  const maxLots = 13;
+  const company = data?.company_headers;
+  const ipoOverview = data?.company_ipo_overview;
+
+  const lotSize = ipoOverview?.lot_size ?? 0;
+
+  const bidPrice =
+    ipoOverview?.issue_price ?? ipoOverview?.price_range_max ?? 0;
+
+  const maxLots = ipoOverview?.max_lot ?? 1;
+
+  const priceMin = ipoOverview?.price_range_min ?? 0;
+  const priceMax = ipoOverview?.price_range_max ?? 0;
 
   const equivalentAmount = lots * lotSize * bidPrice;
+  useEffect(() => {
+    const getIpoData = async () => {
+      const response = await IpoClientDetailsApi("ALAPD6986B");
+
+      console.log(response, "response modal");
+      setClientDetails(response?.data);
+    };
+
+    getIpoData();
+  }, []);
+
+  const handleApply = async () => {
+    const quantity = lots * lotSize;
+    const amount = quantity * bidPrice;
+
+    const payload = {
+      scripId: data?.stock_data?.NSEcode,
+      applicationNo: "36620085",
+      category: "IND", //???
+      applicantName: clientDetails?.clientName,
+      depository: clientDetails?.depository,
+      dpid: "0",
+
+      clientBenfId: clientDetails?.boId,
+
+      chequeReceivedFlag: "Y",
+      chequeAmount: amount.toFixed(2),
+
+      panNo: clientDetails?.panNo,
+
+      bankName: "8888",
+      location: "UPIIDL",
+
+      accountNumberUPIID: clientDetails?.upiId,
+
+      ifscCode: "",
+      referenceNo: "",
+
+      asbaupiid: "1",
+
+      exchange: "BSE",
+      repatriationType: null,
+      clientCode: null,
+
+      dpcode: "",
+      iposbCode: null, //check
+
+      refID: 0,
+      batch: 0,
+
+      bids: [
+        {
+          bidId: "",
+          quantity: quantity.toString(),
+          rate: bidPrice.toString(),
+          cutoffFlag: "0",
+          orderNo: "",
+          actionCode: "N", //N for new, M for modify,
+        },
+      ],
+    };
+
+    console.log(payload);
+
+    const response = await PlaceIpoOrderApi(payload);
+
+    console.log(response);
+  };
 
   return (
-    <Box sx={{ backgroundColor: "#fff" }}>
+    <Box
+      sx={{
+        backgroundColor: "#fff",
+      }}
+    >
       {/* Header */}
       <Box
         sx={{
@@ -30,13 +113,19 @@ const Apply = () => {
             alignItems: "flex-start",
           }}
         >
-          <Box sx={{ display: "flex", gap: 1.5 }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1.5,
+            }}
+          >
             <Box
               component="img"
-              src="https://tl-media.trendlyne.com/profilepicture/3613900_profilepicture_be2ecb8d.jpg"
+              src={company?.company_logo}
+              alt={company?.company_name}
               sx={{
-                width: 36,
-                height: 36,
+                width: 38,
+                height: 38,
                 objectFit: "contain",
               }}
             />
@@ -44,12 +133,12 @@ const Apply = () => {
             <Box>
               <Typography
                 sx={{
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: 500,
                   color: "#353844",
                 }}
               >
-                Capital Numbers Infotech Ltd
+                {company?.company_name}
               </Typography>
 
               <Typography
@@ -70,6 +159,7 @@ const Apply = () => {
 
           <IconButton
             size="small"
+            onClick={onClose}
             sx={{
               border: "1px solid #555",
               width: 22,
@@ -80,7 +170,7 @@ const Apply = () => {
           </IconButton>
         </Box>
 
-        <Tabs
+        {/* <Tabs
           value={tab}
           onChange={(_, value) => setTab(value)}
           sx={{
@@ -95,7 +185,7 @@ const Apply = () => {
           <Tab value="retail" label="Retail" disableRipple sx={tabStyle} />
 
           <Tab value="hni" label="HNI" disableRipple sx={tabStyle} />
-        </Tabs>
+        </Tabs> */}
       </Box>
 
       {/* Content */}
@@ -127,7 +217,7 @@ const Apply = () => {
             }}
           >
             <Typography sx={labelStyle}>
-              No. of Lots (1 Lot = 50 Shares)
+              No. of Lots (1 Lot = {lotSize} Shares)
             </Typography>
 
             <Typography sx={labelStyle}>Max. Lots: {maxLots}</Typography>
@@ -156,6 +246,7 @@ const Apply = () => {
             >
               <IconButton
                 size="small"
+                disabled={lots <= 1}
                 onClick={() => setLots(Math.max(1, lots - 1))}
               >
                 <RemoveIcon sx={{ fontSize: 18 }} />
@@ -165,6 +256,7 @@ const Apply = () => {
 
               <IconButton
                 size="small"
+                disabled={lots >= maxLots}
                 onClick={() => setLots(Math.min(maxLots, lots + 1))}
               >
                 <AddIcon sx={{ fontSize: 18 }} />
@@ -183,7 +275,7 @@ const Apply = () => {
                 fontSize: 16,
               }}
             >
-              {bidPrice}
+              ₹{bidPrice}
             </Box>
           </Box>
 
@@ -196,8 +288,13 @@ const Apply = () => {
           >
             <Typography sx={labelStyle}>
               Price Range:{" "}
-              <Box component="span" sx={{ color: "#414451" }}>
-                279.00 - 294.00
+              <Box
+                component="span"
+                sx={{
+                  color: "#414451",
+                }}
+              >
+                ₹{priceMin.toFixed(2)} - ₹{priceMax.toFixed(2)}
               </Box>
             </Typography>
 
@@ -243,7 +340,7 @@ const Apply = () => {
                 mt: 0.5,
               }}
             >
-              UPI ID linked to your ICICI Bank XXX9807
+              UPI ID linked to your Bank Account
             </Typography>
           </Box>
 
@@ -259,7 +356,7 @@ const Apply = () => {
               fontSize: 13,
             }}
           >
-            9870060690@icici
+            {clientDetails?.upiId}
           </Box>
         </Box>
 
@@ -307,18 +404,21 @@ const Apply = () => {
           <Typography sx={bottomLabel}>Equivalent Amt</Typography>
 
           <Typography sx={bottomValue}>
-            {equivalentAmount.toLocaleString("en-IN")}
+            ₹{equivalentAmount.toLocaleString("en-IN")}
           </Typography>
         </Box>
 
         <Box sx={{ width: 120 }}>
           <Typography sx={bottomLabel}>Max Amount</Typography>
 
-          <Typography sx={bottomValue}>2,00,000</Typography>
+          <Typography sx={bottomValue}>
+            ₹{(maxLots * lotSize * bidPrice).toLocaleString("en-IN")}
+          </Typography>
         </Box>
 
         <Button
           variant="contained"
+          onClick={handleApply}
           sx={{
             flex: 1,
             height: 48,
@@ -327,7 +427,6 @@ const Apply = () => {
             textTransform: "none",
             fontSize: 14,
             boxShadow: "none",
-
             "&:hover": {
               backgroundColor: "#0861a3",
               boxShadow: "none",

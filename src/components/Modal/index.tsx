@@ -2,7 +2,7 @@ import { Box, Modal } from "@mui/material";
 import ApplyModal from "./Apply/Apply";
 import Cancel from "./Cancelled/cancel";
 
-const CommonModal = ({ open, onClose, type, size = "md" }: any) => {
+const CommonModal = ({ open, onClose, type, size = "md", data }: any) => {
   const getWidth = () => {
     switch (size) {
       case "sm":
@@ -21,7 +21,7 @@ const CommonModal = ({ open, onClose, type, size = "md" }: any) => {
   const renderContent = () => {
     switch (type) {
       case "apply":
-        return <ApplyModal />;
+        return <ApplyModal data={data} onClose={onClose} />;
 
       case "cancel":
         return (

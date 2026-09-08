@@ -7,8 +7,19 @@ export const fetchIpoApi = () => {
 export const fetchIpoDetailApi = (ipoId: number) => {
   return commonApi(`Fundamental/IPODetail/${ipoId}`, {}, "GET");
 };
-export const PlaceIpoOrderApi = () => {
-  return commonApi("IPO/PlaceIpoOrder", {}, "POST");
+
+export const IpoClientDetailsApi = (panNo: string) => {
+  return commonApi(
+    "IPO/GetIpoClientDetails",
+    {
+      panNo,
+    },
+    "POST",
+  );
+};
+
+export const PlaceIpoOrderApi = (payload: any) => {
+  return commonApi("IPO/PlaceIpoOrder", payload, "POST");
 };
 
 // export const verifyOtpApi = (mobileNo: string, otp: string) => {
