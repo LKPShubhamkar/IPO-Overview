@@ -122,32 +122,36 @@ const Details = () => {
         >
           <Box
             sx={{
-              display: "grid",
-
-              // Mobile → one below another
-              // Desktop → two columns
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "1fr 1fr",
+              columnCount: {
+                xs: 1,
+                sm: 2,
               },
-
-              gap: {
+              columnGap: {
                 xs: 1,
                 sm: 1.5,
               },
             }}
           >
-            <IpoOverview data={data.company_ipo_overview} />
+            <Box sx={{ breakInside: "avoid", mb: 1.5 }}>
+              <IpoOverview data={data.company_ipo_overview} />
+            </Box>
 
-            <ImportantDates data={data.important_dates} />
+            <Box sx={{ breakInside: "avoid", mb: 1.5 }}>
+              <SharesOnOffer data={data.shares_on_offer} />
+            </Box>
 
-            <SharesOnOffer data={data.shares_on_offer} />
-
-            <SubscriptionData data={data.subscription_rate} />
-
-            <InformationOnIssue data={data.information} />
-
-            <FinancialOverview data={data.financials} />
+            <Box sx={{ breakInside: "avoid", mb: 1.5 }}>
+              <InformationOnIssue data={data.information} />
+            </Box>
+            <Box sx={{ breakInside: "avoid", mb: 1.5 }}>
+              <ImportantDates data={data.important_dates} />
+            </Box>
+            <Box sx={{ breakInside: "avoid", mb: 1.5 }}>
+              <SubscriptionData data={data.subscription_rate} />
+            </Box>
+            <Box sx={{ breakInside: "avoid", mb: 1.5 }}>
+              <FinancialOverview data={data.financials} />
+            </Box>
           </Box>
         </Box>
       </Box>

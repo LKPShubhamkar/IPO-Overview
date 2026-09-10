@@ -41,8 +41,10 @@ const SubscriptionData = ({ data }: any) => {
             }}
           >
             <Typography sx={{ fontSize: 12 }}>
-              {row.day}
-              {/* {row.day?.replace("<br>", " ")} */}
+              {row.day
+                ?.replace(/<br\s*\/?>/gi, " ")
+                .replace(/\s*\(Day\s+\d+\)/gi, "")
+                .trim()}
             </Typography>
 
             <Typography sx={{ fontSize: 12 }}>

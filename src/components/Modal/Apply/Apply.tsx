@@ -1,96 +1,223 @@
 import { useEffect, useState } from "react";
-import { Box, Button, IconButton, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import { IpoClientDetailsApi, PlaceIpoOrderApi } from "../../../services/api";
+import Bidbox from "./Bidbox";
 
 const Apply = ({ data, onClose }: any) => {
-  // const [tab, setTab] = useState("retail");
-  const [lots, setLots] = useState(1);
-  const [clientDetails, setClientDetails] = useState(null);
+  const [clientDetails, setClientDetails] = useState<any>(null);
+  const subscriptionHeader = data?.subscription_rate?.subscription_header ?? [];
+  const [category, setCategory] = useState("");
+  const [bids, setBids] = useState<any[]>([]);
+  const [upiId, setUpiId] = useState("");
 
   const company = data?.company_headers;
   const ipoOverview = data?.company_ipo_overview;
 
   const lotSize = ipoOverview?.lot_size ?? 0;
 
-  const bidPrice =
-    ipoOverview?.issue_price ?? ipoOverview?.price_range_max ?? 0;
-
   const maxLots = ipoOverview?.max_lot ?? 1;
 
   const priceMin = ipoOverview?.price_range_min ?? 0;
   const priceMax = ipoOverview?.price_range_max ?? 0;
 
-  const equivalentAmount = lots * lotSize * bidPrice;
+  const defaultBidPrice =
+    ipoOverview?.issue_price ?? ipoOverview?.price_range_max ?? 0;
+
+  const isHni = category === "non_institutional_investor";
+
+  const minLots = isHni ? 14 : 1;
+  const categoryMaxAmount = isHni ? 500000 : 200000;
+
+  // Maximum lots allowed based on maximum IPO price
+  const categoryMaxLots =
+    lotSize > 0 && priceMax > 0
+      ? Math.floor(categoryMaxAmount / (lotSize * priceMax))
+      : maxLots;
+
+  const effectiveMaxLots = Math.min(maxLots, categoryMaxLots);
+
+  useEffect(() => {
+    if (subscriptionHeader.length > 0) {
+      setCategory(subscriptionHeader[0]?.accessor);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (bids.length === 0 && ipoOverview) {
+      setBids([
+        {
+          lots: minLots,
+          bidPrice: defaultBidPrice,
+        },
+      ]);
+    }
+  }, [ipoOverview, minLots, defaultBidPrice]);
+
+  useEffect(() => {
+    if (!ipoOverview || bids.length === 0) return;
+
+    setBids((previousBids) =>
+      previousBids.map((bid) => ({
+        ...bid,
+        lots: Math.max(minLots, Math.min(bid.lots, effectiveMaxLots)),
+      })),
+    );
+  }, [category]);
+
   useEffect(() => {
     const getIpoData = async () => {
-      const response = await IpoClientDetailsApi("ALAPD6986B");
+      try {
+        const response = await IpoClientDetailsApi("ALAPD6986B");
 
-      console.log(response, "response modal");
-      setClientDetails(response?.data);
+        console.log(response, "response modal");
+
+        setClientDetails(response?.data ?? response?.body);
+      } catch (error) {
+        console.error("Failed to fetch client details:", error);
+      }
     };
 
     getIpoData();
   }, []);
+  useEffect(() => {
+    if (clientDetails?.upiId) {
+      setUpiId(clientDetails.upiId);
+    }
+  }, [clientDetails]);
 
+  const updateBid = (index: number, field: string, value: number) => {
+    setBids((previousBids) =>
+      previousBids.map((bid, currentIndex) =>
+        currentIndex === index
+          ? {
+              ...bid,
+              [field]: value,
+            }
+          : bid,
+      ),
+    );
+  };
+
+  const addBid = () => {
+    if (bids.length >= 3) return;
+
+    setBids((previousBids) => [
+      ...previousBids,
+      {
+        lots: 1,
+        bidPrice: defaultBidPrice,
+      },
+    ]);
+  };
+
+  /*
+   * Remove Bid
+   * Minimum 1
+   */
+  const removeBid = (index: number) => {
+    if (bids.length <= 1) return;
+
+    setBids((previousBids) =>
+      previousBids.filter((_, currentIndex) => currentIndex !== index),
+    );
+  };
+
+  /*
+   * Total Equivalent Amount
+   */
+  const equivalentAmount = bids.reduce((total, bid) => {
+    return total + bid.lots * lotSize * bid.bidPrice;
+  }, 0);
+
+  /*
+   * Maximum Amount
+   */
+  const maxAmount = Math.min(maxLots * lotSize * priceMax, categoryMaxAmount);
+
+  /*
+   * Apply IPO
+   */
   const handleApply = async () => {
-    const quantity = lots * lotSize;
-    const amount = quantity * bidPrice;
+    try {
+      const totalAmount = bids.reduce((total, bid) => {
+        return total + bid.lots * lotSize * bid.bidPrice;
+      }, 0);
 
-    const payload = {
-      scripId: data?.stock_data?.NSEcode,
-      applicationNo: "36620085",
-      category: "IND", //???
-      applicantName: clientDetails?.clientName,
-      depository: clientDetails?.depository,
-      dpid: "0",
+      const payload = {
+        scripId: data?.stock_data?.NSEcode ?? "",
 
-      clientBenfId: clientDetails?.boId,
+        applicationNo: "36620085",
 
-      chequeReceivedFlag: "Y",
-      chequeAmount: amount.toFixed(2),
+        category: "IND",
 
-      panNo: clientDetails?.panNo,
+        applicantName: clientDetails?.clientName ?? "",
 
-      bankName: "8888",
-      location: "UPIIDL",
+        depository: clientDetails?.depository ?? "",
 
-      accountNumberUPIID: clientDetails?.upiId,
+        dpid: "0",
 
-      ifscCode: "",
-      referenceNo: "",
+        clientBenfId: clientDetails?.boId ?? "",
 
-      asbaupiid: "1",
+        chequeReceivedFlag: "Y",
 
-      exchange: "BSE",
-      repatriationType: null,
-      clientCode: null,
+        chequeAmount: totalAmount.toFixed(2),
 
-      dpcode: "",
-      iposbCode: null, //check
+        panNo: clientDetails?.panNo ?? "",
 
-      refID: 0,
-      batch: 0,
+        bankName: "8888",
 
-      bids: [
-        {
+        location: "UPIIDL",
+
+        accountNumberUPIID: clientDetails?.upiId ?? "",
+
+        ifscCode: "",
+
+        referenceNo: "",
+
+        asbaupiid: "1",
+
+        exchange: "BSE",
+
+        repatriationType: null,
+
+        clientCode: null,
+
+        dpcode: "",
+
+        iposbCode: null,
+
+        refID: 0,
+
+        batch: 0,
+
+        /*
+         * Convert UI bids
+         * into API format
+         */
+        bids: bids.map((bid) => ({
           bidId: "",
-          quantity: quantity.toString(),
-          rate: bidPrice.toString(),
+
+          quantity: (bid.lots * lotSize).toString(),
+
+          rate: bid.bidPrice.toString(),
+
           cutoffFlag: "0",
+
           orderNo: "",
-          actionCode: "N", //N for new, M for modify,
-        },
-      ],
-    };
 
-    console.log(payload);
+          actionCode: "N",
+        })),
+      };
 
-    const response = await PlaceIpoOrderApi(payload);
+      console.log("IPO Order Payload:", payload);
 
-    console.log(response);
+      const response = await PlaceIpoOrderApi(payload);
+
+      console.log("IPO Order Response:", response);
+    } catch (error) {
+      console.error("Failed to place IPO order:", error);
+    }
   };
 
   return (
@@ -100,6 +227,7 @@ const Apply = ({ data, onClose }: any) => {
       }}
     >
       {/* Header */}
+
       <Box
         sx={{
           p: 2,
@@ -170,148 +298,80 @@ const Apply = ({ data, onClose }: any) => {
           </IconButton>
         </Box>
 
-        {/* <Tabs
-          value={tab}
-          onChange={(_, value) => setTab(value)}
-          sx={{
-            minHeight: 42,
-            mt: 1,
+        {/* Investor Type */}
 
-            "& .MuiTabs-indicator": {
-              height: 2,
-            },
-          }}
-        >
-          <Tab value="retail" label="Retail" disableRipple sx={tabStyle} />
-
-          <Tab value="hni" label="HNI" disableRipple sx={tabStyle} />
-        </Tabs> */}
-      </Box>
-
-      {/* Content */}
-      <Box sx={{ p: 2 }}>
-        {/* Bid */}
-        <Box
-          sx={{
-            backgroundColor: "#e8f1f7",
-            borderRadius: 2,
-            p: 2,
-          }}
-        >
+        <Box sx={{ mt: 2 }}>
           <Typography
             sx={{
-              fontSize: 14,
-              fontWeight: 500,
-              mb: 2,
-            }}
-          >
-            Bid 1
-          </Typography>
-
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "1.5fr 0.7fr 1fr",
-              gap: 2,
+              fontSize: 11,
+              color: "#858585",
               mb: 0.7,
             }}
           >
-            <Typography sx={labelStyle}>
-              No. of Lots (1 Lot = {lotSize} Shares)
-            </Typography>
-
-            <Typography sx={labelStyle}>Max. Lots: {maxLots}</Typography>
-
-            <Typography sx={labelStyle}>Bid Price</Typography>
-          </Box>
+            Investor Type
+          </Typography>
 
           <Box
+            component="select"
+            value={category}
+            onChange={(e: any) => setCategory(e.target.value)}
             sx={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 2,
+              width: "100%",
+              height: 44,
+              border: "1px solid #e5e5e5",
+              borderRadius: 1,
+              px: 1.5,
+              fontSize: 13,
+              backgroundColor: "#fff",
+              outline: "none",
             }}
           >
-            {/* Lots */}
-            <Box
-              sx={{
-                height: 46,
-                backgroundColor: "#fff",
-                borderRadius: 1.5,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                px: 1,
-              }}
-            >
-              <IconButton
-                size="small"
-                disabled={lots <= 1}
-                onClick={() => setLots(Math.max(1, lots - 1))}
-              >
-                <RemoveIcon sx={{ fontSize: 18 }} />
-              </IconButton>
-
-              <Typography sx={{ fontSize: 16 }}>{lots}</Typography>
-
-              <IconButton
-                size="small"
-                disabled={lots >= maxLots}
-                onClick={() => setLots(Math.min(maxLots, lots + 1))}
-              >
-                <AddIcon sx={{ fontSize: 18 }} />
-              </IconButton>
-            </Box>
-
-            {/* Price */}
-            <Box
-              sx={{
-                height: 46,
-                backgroundColor: "#fff",
-                borderRadius: 1.5,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 16,
-              }}
-            >
-              ₹{bidPrice}
-            </Box>
+            {subscriptionHeader.map((item: any) => (
+              <option key={item.accessor} value={item.accessor}>
+                {item.name}
+              </option>
+            ))}
           </Box>
+        </Box>
+      </Box>
 
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              mt: 1.5,
-            }}
-          >
-            <Typography sx={labelStyle}>
-              Price Range:{" "}
-              <Box
-                component="span"
-                sx={{
-                  color: "#414451",
-                }}
-              >
-                ₹{priceMin.toFixed(2)} - ₹{priceMax.toFixed(2)}
-              </Box>
-            </Typography>
+      {/* Content */}
 
-            <Typography
-              sx={{
-                fontSize: 12,
-                color: "#0066b3",
-                textDecoration: "underline",
-                cursor: "pointer",
-              }}
-            >
-              Add Bid 2
-            </Typography>
-          </Box>
+      <Box sx={{ p: 2 }}>
+        {/* Bids */}
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          {bids.map((bid, index) => (
+            <Bidbox
+              key={index}
+              bidNumber={index + 1}
+              lotSize={lotSize}
+              maxLots={effectiveMaxLots}
+              minLots={minLots}
+              maxAmount={categoryMaxAmount}
+              lots={bid.lots}
+              bidPrice={bid.bidPrice}
+              priceMin={priceMin}
+              priceMax={priceMax}
+              onLotsChange={(value: number) => updateBid(index, "lots", value)}
+              onPriceChange={(value: number) =>
+                updateBid(index, "bidPrice", value)
+              }
+              onRemove={() => removeBid(index)}
+              onAddBid={addBid}
+              canAddBid={bids.length < 3}
+            />
+          ))}
         </Box>
 
         {/* UPI */}
+
         <Box
           sx={{
             mt: 2,
@@ -344,33 +404,54 @@ const Apply = ({ data, onClose }: any) => {
             </Typography>
           </Box>
 
-          <Box
+          <TextField
+            value={upiId}
+            onChange={(e) => setUpiId(e.target.value)}
+            placeholder="Enter UPI ID"
+            variant="outlined"
             sx={{
               width: 270,
-              height: 48,
-              border: "1px solid #64b86b",
-              borderRadius: 1.5,
-              display: "flex",
-              alignItems: "center",
-              px: 1.5,
-              fontSize: 13,
+
+              "& .MuiOutlinedInput-root": {
+                height: 48,
+                borderRadius: 1.5,
+                fontSize: 13,
+                backgroundColor: "#fff",
+
+                "& fieldset": {
+                  borderColor: "#64b86b",
+                },
+
+                "&:hover fieldset": {
+                  borderColor: "#64b86b",
+                },
+
+                "&.Mui-focused fieldset": {
+                  borderColor: "#64b86b",
+                },
+              },
+
+              "& .MuiInputBase-input": {
+                px: 1.5,
+              },
             }}
-          >
-            {clientDetails?.upiId}
-          </Box>
+          />
         </Box>
 
         {/* Message */}
+
         <Box
           sx={{
             mt: 2,
-            height: 32,
+            minHeight: 32,
             borderRadius: 1.5,
             backgroundColor: "#eaf7ec",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: 11,
+            textAlign: "center",
+            px: 1,
           }}
         >
           Retail can apply upto Rs 2 Lakh.
@@ -389,12 +470,13 @@ const Apply = ({ data, onClose }: any) => {
       </Box>
 
       {/* Bottom */}
+
       <Box
         sx={{
           borderTop: "1px solid #e5e5e5",
           backgroundColor: "#f7f7f7",
           px: 2,
-          py: 1.5,
+          py: 1,
           display: "flex",
           alignItems: "center",
           gap: 4,
@@ -412,21 +494,23 @@ const Apply = ({ data, onClose }: any) => {
           <Typography sx={bottomLabel}>Max Amount</Typography>
 
           <Typography sx={bottomValue}>
-            ₹{(maxLots * lotSize * bidPrice).toLocaleString("en-IN")}
+            ₹{maxAmount.toLocaleString("en-IN")}
           </Typography>
         </Box>
 
         <Button
           variant="contained"
           onClick={handleApply}
+          disabled={!clientDetails || bids.length === 0}
           sx={{
             flex: 1,
-            height: 48,
+            height: 45,
             backgroundColor: "#0861a3",
             borderRadius: 1.5,
             textTransform: "none",
             fontSize: 14,
             boxShadow: "none",
+
             "&:hover": {
               backgroundColor: "#0861a3",
               boxShadow: "none",
@@ -438,27 +522,6 @@ const Apply = ({ data, onClose }: any) => {
       </Box>
     </Box>
   );
-};
-
-const tabStyle = {
-  minWidth: 55,
-  minHeight: 42,
-  height: 42,
-  p: 0,
-  mr: 1,
-  textTransform: "none",
-  fontSize: 13,
-  fontWeight: 500,
-  color: "#999",
-
-  "&.Mui-selected": {
-    color: "#0066b3",
-  },
-};
-
-const labelStyle = {
-  fontSize: 10,
-  color: "#858585",
 };
 
 const bottomLabel = {

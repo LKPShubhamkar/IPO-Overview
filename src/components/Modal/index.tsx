@@ -49,6 +49,7 @@ const CommonModal = ({ open, onClose, type, size = "md", data }: any) => {
           transform: "translate(-50%, -50%)",
           width: getWidth(),
           maxWidth: "90%",
+          maxHeight: "85%",
           overflowY: "auto",
           bgcolor: "#fff",
           borderRadius: "8px",
