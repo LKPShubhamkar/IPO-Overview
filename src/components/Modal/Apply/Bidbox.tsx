@@ -1,4 +1,5 @@
 import { Box, IconButton, Typography } from "@mui/material";
+
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import CloseIcon from "@mui/icons-material/Close";
@@ -8,7 +9,6 @@ const Bidbox = ({
   lotSize,
   maxLots,
   minLots,
-  maxAmount,
   lots,
   bidPrice,
   priceMin,
@@ -27,7 +27,7 @@ const Bidbox = ({
         p: 1.5,
       }}
     >
-      {/* Header */}
+      {/* BID HEADER */}
       <Box
         sx={{
           display: "flex",
@@ -61,7 +61,8 @@ const Bidbox = ({
         )}
       </Box>
 
-      {/* Labels */}
+      {/* LABELS */}
+
       <Box
         sx={{
           display: "grid",
@@ -82,7 +83,8 @@ const Bidbox = ({
         <Typography sx={labelStyle}>Bid Price</Typography>
       </Box>
 
-      {/* Inputs */}
+      {/* INPUTS */}
+
       <Box
         sx={{
           display: "grid",
@@ -90,7 +92,8 @@ const Bidbox = ({
           gap: 2,
         }}
       >
-        {/* Lots */}
+        {/* LOT SELECTOR */}
+
         <Box
           sx={{
             height: 40,
@@ -110,7 +113,13 @@ const Bidbox = ({
             <RemoveIcon sx={{ fontSize: 18 }} />
           </IconButton>
 
-          <Typography sx={{ fontSize: 16 }}>{lots}</Typography>
+          <Typography
+            sx={{
+              fontSize: 16,
+            }}
+          >
+            {lots}
+          </Typography>
 
           <IconButton
             size="small"
@@ -121,7 +130,8 @@ const Bidbox = ({
           </IconButton>
         </Box>
 
-        {/* Bid Price */}
+        {/* BID PRICE */}
+
         <Box
           component="input"
           type="number"
@@ -150,15 +160,21 @@ const Bidbox = ({
             "&::-webkit-inner-spin-button": {
               opacity: 1,
             },
+
+            "&:focus": {
+              outline: "1px solid #0066b3",
+            },
           }}
         />
       </Box>
 
-      {/* Bottom */}
+      {/* FOOTER */}
+
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
+          alignItems: "center",
           mt: 1.5,
         }}
       >
@@ -170,7 +186,8 @@ const Bidbox = ({
               color: "#414451",
             }}
           >
-            ₹{priceMin.toFixed(2)} - ₹{priceMax.toFixed(2)}
+            ₹{priceMin.toFixed(2)}
+            {" - "}₹{priceMax.toFixed(2)}
           </Box>
         </Typography>
 
@@ -184,7 +201,7 @@ const Bidbox = ({
               cursor: "pointer",
             }}
           >
-            Add Bid
+            Add Bid {bidNumber + 1}
           </Typography>
         )}
       </Box>

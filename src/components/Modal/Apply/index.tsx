@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
-import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { IpoClientDetailsApi, PlaceIpoOrderApi } from "../../../services/api";
-import Bidbox from "./Bidbox";
+
+import InvestorType from "./InvestorType";
+import BidSection from "./BidSection";
+import UpiSection from "./UpiSection";
 
 const Apply = ({ data, onClose }: any) => {
   const [clientDetails, setClientDetails] = useState<any>(null);
   const subscriptionHeader = data?.subscription_rate?.subscription_header ?? [];
+
   const [category, setCategory] = useState("");
   const [bids, setBids] = useState<any[]>([]);
   const [upiId, setUpiId] = useState("");
@@ -15,7 +19,6 @@ const Apply = ({ data, onClose }: any) => {
   const ipoOverview = data?.company_ipo_overview;
 
   const lotSize = ipoOverview?.lot_size ?? 0;
-
   const maxLots = ipoOverview?.max_lot ?? 1;
 
   const priceMin = ipoOverview?.price_range_min ?? 0;
@@ -29,7 +32,6 @@ const Apply = ({ data, onClose }: any) => {
   const minLots = isHni ? 14 : 1;
   const categoryMaxAmount = isHni ? 500000 : 200000;
 
-  // Maximum lots allowed based on maximum IPO price
   const categoryMaxLots =
     lotSize > 0 && priceMax > 0
       ? Math.floor(categoryMaxAmount / (lotSize * priceMax))
@@ -80,6 +82,7 @@ const Apply = ({ data, onClose }: any) => {
 
     getIpoData();
   }, []);
+
   useEffect(() => {
     if (clientDetails?.upiId) {
       setUpiId(clientDetails.upiId);
@@ -105,16 +108,12 @@ const Apply = ({ data, onClose }: any) => {
     setBids((previousBids) => [
       ...previousBids,
       {
-        lots: 1,
+        lots: Math.min(minLots, effectiveMaxLots),
         bidPrice: defaultBidPrice,
       },
     ]);
   };
 
-  /*
-   * Remove Bid
-   * Minimum 1
-   */
   const removeBid = (index: number) => {
     if (bids.length <= 1) return;
 
@@ -123,21 +122,12 @@ const Apply = ({ data, onClose }: any) => {
     );
   };
 
-  /*
-   * Total Equivalent Amount
-   */
   const equivalentAmount = bids.reduce((total, bid) => {
     return total + bid.lots * lotSize * bid.bidPrice;
   }, 0);
 
-  /*
-   * Maximum Amount
-   */
   const maxAmount = Math.min(maxLots * lotSize * priceMax, categoryMaxAmount);
 
-  /*
-   * Apply IPO
-   */
   const handleApply = async () => {
     try {
       const totalAmount = bids.reduce((total, bid) => {
@@ -191,10 +181,6 @@ const Apply = ({ data, onClose }: any) => {
 
         batch: 0,
 
-        /*
-         * Convert UI bids
-         * into API format
-         */
         bids: bids.map((bid) => ({
           bidId: "",
 
@@ -300,143 +286,29 @@ const Apply = ({ data, onClose }: any) => {
 
         {/* Investor Type */}
 
-        <Box sx={{ mt: 2 }}>
-          <Typography
-            sx={{
-              fontSize: 11,
-              color: "#858585",
-              mb: 0.7,
-            }}
-          >
-            Investor Type
-          </Typography>
+        <InvestorType
+          category={category}
+          options={subscriptionHeader}
+          onChange={setCategory}
+        />
 
-          <Box
-            component="select"
-            value={category}
-            onChange={(e: any) => setCategory(e.target.value)}
-            sx={{
-              width: "100%",
-              height: 44,
-              border: "1px solid #e5e5e5",
-              borderRadius: 1,
-              px: 1.5,
-              fontSize: 13,
-              backgroundColor: "#fff",
-              outline: "none",
-            }}
-          >
-            {subscriptionHeader.map((item: any) => (
-              <option key={item.accessor} value={item.accessor}>
-                {item.name}
-              </option>
-            ))}
-          </Box>
-        </Box>
-      </Box>
+        {/* BIDS */}
 
-      {/* Content */}
-
-      <Box sx={{ p: 2 }}>
-        {/* Bids */}
-
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-          }}
-        >
-          {bids.map((bid, index) => (
-            <Bidbox
-              key={index}
-              bidNumber={index + 1}
-              lotSize={lotSize}
-              maxLots={effectiveMaxLots}
-              minLots={minLots}
-              maxAmount={categoryMaxAmount}
-              lots={bid.lots}
-              bidPrice={bid.bidPrice}
-              priceMin={priceMin}
-              priceMax={priceMax}
-              onLotsChange={(value: number) => updateBid(index, "lots", value)}
-              onPriceChange={(value: number) =>
-                updateBid(index, "bidPrice", value)
-              }
-              onRemove={() => removeBid(index)}
-              onAddBid={addBid}
-              canAddBid={bids.length < 3}
-            />
-          ))}
-        </Box>
+        <BidSection
+          bids={bids}
+          lotSize={lotSize}
+          maxLots={effectiveMaxLots}
+          minLots={minLots}
+          priceMin={priceMin}
+          priceMax={priceMax}
+          onUpdate={updateBid}
+          onAddBid={addBid}
+          onRemoveBid={removeBid}
+        />
 
         {/* UPI */}
 
-        <Box
-          sx={{
-            mt: 2,
-            border: "1px solid #e5e5e5",
-            borderRadius: 2,
-            p: 1.5,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Box>
-            <Typography
-              sx={{
-                fontSize: 14,
-                fontWeight: 500,
-              }}
-            >
-              UPI ID
-            </Typography>
-
-            <Typography
-              sx={{
-                fontSize: 10,
-                color: "#999",
-                mt: 0.5,
-              }}
-            >
-              UPI ID linked to your Bank Account
-            </Typography>
-          </Box>
-
-          <TextField
-            value={upiId}
-            onChange={(e) => setUpiId(e.target.value)}
-            placeholder="Enter UPI ID"
-            variant="outlined"
-            sx={{
-              width: 270,
-
-              "& .MuiOutlinedInput-root": {
-                height: 48,
-                borderRadius: 1.5,
-                fontSize: 13,
-                backgroundColor: "#fff",
-
-                "& fieldset": {
-                  borderColor: "#64b86b",
-                },
-
-                "&:hover fieldset": {
-                  borderColor: "#64b86b",
-                },
-
-                "&.Mui-focused fieldset": {
-                  borderColor: "#64b86b",
-                },
-              },
-
-              "& .MuiInputBase-input": {
-                px: 1.5,
-              },
-            }}
-          />
-        </Box>
+        <UpiSection upiId={upiId} onChange={setUpiId} />
 
         {/* Message */}
 

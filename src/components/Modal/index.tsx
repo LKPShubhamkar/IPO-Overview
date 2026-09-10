@@ -1,5 +1,5 @@
 import { Box, Modal } from "@mui/material";
-import ApplyModal from "./Apply/Apply";
+import ApplyModal from "./Apply/index";
 import Cancel from "./Cancelled/cancel";
 
 const CommonModal = ({ open, onClose, type, size = "md", data }: any) => {
