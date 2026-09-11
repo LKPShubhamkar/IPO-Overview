@@ -1,5 +1,4 @@
 import { useMediaQuery, useTheme } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import CommonModal from "../../../components/Modal";
 import AppliedWeb from "./AppliedWeb";
@@ -25,19 +24,18 @@ const appliedData = [
 
 const Applied = () => {
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
+  const [modalType, setModalType] = useState<"cancel" | "details">("cancel");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const handleCancel = () => {
+    setModalType("cancel");
     setOpen(true);
   };
 
-  const handleViewDetail = (item: any) => {
-    navigate("/details", {
-      state: {
-        ipo: item.ipo_id,
-      },
-    });
+  const handleViewDetail = () => {
+    setModalType("details");
+    setOpen(true);
   };
 
   return (
@@ -59,8 +57,8 @@ const Applied = () => {
       <CommonModal
         open={open}
         onClose={() => setOpen(false)}
-        size="sm"
-        type="cancel"
+        size={modalType === "cancel" ? "sm" : "md"}
+        type={modalType}
       />
     </>
   );
