@@ -1,13 +1,119 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 
-const ViewDetails = ({ onClose }: any) => {
+const data = [
+  {
+    scripid: "VEEGALAND",
+    applicationno: "41844498",
+    category: "IND",
+    applicantname: "NITIN DEEPCHAND SELOT",
+    depository: "CDSL",
+    dpid: "0",
+    clientbenfid: "1202350000281511",
+    chequereceivedflag: "Y",
+    chequeamount: "14980.0000",
+    chequeno: "",
+    panno: "AMGPS5982F",
+    bankname: "8888",
+    location: "UPIIDL",
+    accountnumber_upiid: "v9404283094@upi",
+    ifsccode: "",
+    referenceno: "",
+    entrydatetime: "15-09-2026 16:57:15",
+    lastmodifieddatetime: "15-09-2026 16:57:15",
+    dpstatus: "S",
+    dpremarks: "",
+    sponsorbankpaystatus: "10",
+    sponsorbankactiontime: "15-09-2026 21:51:21",
+    sponsorbankamtblocked: "14980.00",
+    rejectreason: "10-- REQUEST SENT TO INVESTORS UPI APP FOR ACCEPTANCE",
+    loginid: "",
+    branchcode: "39",
+    subbrokercode: "",
+    errorcode: "0",
+    message: "",
+    bids: [
+      {
+        bidid: "1293708612",
+        quantity: "107.0000",
+        rate: "140.0000",
+        cuttoffflag: "0",
+        orderno: "2172775",
+        orderstatus: "N",
+      },
+    ],
+  },
+];
+
+const ViewDetails = ({ onClose }: { onClose: () => void }) => {
+  const theme = useTheme();
+
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const ipo = data[0];
+  const bid = ipo.bids?.[0];
+
+  const bidAmount = Number(ipo.sponsorbankamtblocked || 0).toLocaleString(
+    "en-IN",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    },
+  );
+
+  const bidQuantity = Number(bid?.quantity || 0);
+  const bidRate = Number(bid?.rate || 0);
+
+  const formatDate = (dateTime: string) => {
+    if (!dateTime) return "-";
+
+    const [date, time] = dateTime.split(" ");
+    const [day, month, year] = date.split("-");
+
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    return `${day} ${months[Number(month) - 1]} ${year}${
+      time ? `, ${time}` : ""
+    }`;
+  };
+
+  const getStatus = () => {
+    if (ipo.rejectreason?.includes("REQUEST SENT")) {
+      return "UPI Pending";
+    }
+
+    if (ipo.dpstatus === "S") {
+      return "Submitted";
+    }
+
+    return ipo.message || "Submitted";
+  };
+
   return (
     <Box
       sx={{
         width: "100%",
-        minHeight: "100vh",
+        // minHeight: "100vh",
         backgroundColor: "#fff",
         color: "#414451",
       }}
@@ -45,7 +151,7 @@ const ViewDetails = ({ onClose }: any) => {
               color: "#7bbd00",
             }}
           >
-            CN
+            {ipo.scripid.substring(0, 2)}
           </Box>
 
           <Box>
@@ -55,7 +161,7 @@ const ViewDetails = ({ onClose }: any) => {
                 fontWeight: 500,
               }}
             >
-              Capital Numbers Infotech Ltd
+              {ipo.scripid}
             </Typography>
 
             <Typography
@@ -140,7 +246,7 @@ const ViewDetails = ({ onClose }: any) => {
             Bid Amount
           </Box>
           <Box component="span" sx={{ fontSize: 14 }}>
-            2,05,800.00
+            ₹{bidAmount}
           </Box>
         </Typography>
 
@@ -149,7 +255,7 @@ const ViewDetails = ({ onClose }: any) => {
             Submitted on
           </Box>
           <Box component="span" sx={{ fontSize: 14 }}>
-            23 Jan 2025
+            {formatDate(ipo.entrydatetime)}
           </Box>
         </Typography>
       </Box>
@@ -162,11 +268,18 @@ const ViewDetails = ({ onClose }: any) => {
           border: "1px solid #e2e2e2",
           borderRadius: 2,
           overflow: "hidden",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
         }}
       >
-        <Box sx={{ p: 2 }}>
+        {/* 40% */}
+        <Box
+          sx={{
+            p: 2,
+            flex: isMobile ? "auto" : "0 0 45%",
+            minWidth: 0,
+          }}
+        >
           <Typography
             sx={{
               fontSize: 17,
@@ -177,14 +290,17 @@ const ViewDetails = ({ onClose }: any) => {
             IPO Bid Snapshot
           </Typography>
 
-          <InfoRow label="UPI Handle" value="9920969697@upi" />
+          <InfoRow label="UPI Handle" value={ipo.accountnumber_upiid || "-"} />
 
-          <InfoRow label="Category" value="HNI" />
+          <InfoRow label="Category" value={ipo.category || "-"} />
         </Box>
 
+        {/* 60% */}
         <Box
           sx={{
             p: 2,
+            flex: isMobile ? "auto" : "0 0 55%",
+            minWidth: 0,
             backgroundColor: "#f3f6fa",
           }}
         >
@@ -241,19 +357,61 @@ const ViewDetails = ({ onClose }: any) => {
             rowGap: 1.5,
           }}
         >
-          <SummaryItem label="Status" value="Submitted" />
-          <SummaryItem label="Order Type" value="IPO" />
-          <SummaryItem label="Application Number" value="DHNDE1029279" />
-          <SummaryItem label="Order Time" value="23 Jan 2025, 21:44:31" />
-          <SummaryItem label="Bid 1 Quantity / Price" value="700 / 294.00" />
-          <SummaryItem label="Allotment Date" value="27 Jan 2025" />
+          <SummaryItem label="Status" value={getStatus()} />
 
-          <SummaryItem label="Refund Date" value="28 Jan 2025" />
-          <SummaryItem label="Transfer Date" value="28 Jan 2025" />
-          <SummaryItem label="Listing Date" value="29 Jan 2025" />
-          <SummaryItem label="CDSL Demat Account" value="123456789012346" />
-          <SummaryItem label="Client ID" value="1234567890" />
-          <SummaryItem label="Client PAN" value="BTST4549P" />
+          <SummaryItem label="Order Type" value="IPO" />
+
+          <SummaryItem label="Application Number" value={ipo.applicationno} />
+
+          <SummaryItem
+            label="Order Time"
+            value={formatDate(ipo.entrydatetime)}
+          />
+
+          <SummaryItem
+            label="Bid 1 Quantity / Price"
+            value={`${bidQuantity} / ₹${bidRate.toFixed(2)}`}
+          />
+          <SummaryItem label="Allotment Date" value="---x---" />
+
+          <SummaryItem label="Refund Date" value="---x---" />
+          <SummaryItem label="Transfer Date" value="---x---" />
+          <SummaryItem label="Listing Date" value="---x---" />
+
+          {/* <SummaryItem label="Bid ID" value={bid?.bidid || "-"} />
+
+          <SummaryItem label="Order Number" value={bid?.orderno || "-"} />
+
+          <SummaryItem label="Bid Status" value={bid?.orderstatus || "-"} />
+
+          <SummaryItem label="Depository" value={ipo.depository || "-"} /> */}
+
+          <SummaryItem
+            label="CDSL Demat Account"
+            value={ipo.clientbenfid || "-"}
+          />
+
+          <SummaryItem label="DP ID" value={ipo.dpid || "-----"} />
+
+          <SummaryItem label="Client PAN" value={ipo.panno || "-"} />
+
+          {/* <SummaryItem label="Sponsor Bank" value={ipo.bankname || "-"} />
+
+          <SummaryItem label="Amount Blocked" value={`₹${bidAmount}`} />
+
+          <SummaryItem
+            label="Sponsor Bank Status"
+            value={ipo.sponsorbankpaystatus || "-"}
+          />
+
+          <SummaryItem label="Mandate Status" value={ipo.rejectreason || "-"} />
+
+          <SummaryItem
+            label="Sponsor Bank Action Time"
+            value={formatDate(ipo.sponsorbankactiontime)}
+          />
+
+          <SummaryItem label="Branch Code" value={ipo.branchcode || "-"} /> */}
         </Box>
       </Box>
     </Box>
@@ -267,6 +425,7 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => {
         display: "flex",
         justifyContent: "space-between",
         mb: 1,
+        gap: 2,
       }}
     >
       <Typography
@@ -281,6 +440,8 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => {
       <Typography
         sx={{
           fontSize: 14,
+          textAlign: "right",
+          wordBreak: "break-word",
         }}
       >
         {value}
@@ -305,7 +466,8 @@ const SummaryItem = ({ label, value }: { label: string; value: string }) => {
       <Typography
         sx={{
           fontSize: 14,
-          whiteSpace: "nowrap",
+          whiteSpace: "normal",
+          wordBreak: "break-word",
         }}
       >
         {value}

@@ -192,7 +192,7 @@ const Apply = ({ data, onClose }: any) => {
 
           orderNo: "",
 
-          actionCode: "N",
+          actionCode: "N", //  C
         })),
       };
 

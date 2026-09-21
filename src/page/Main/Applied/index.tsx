@@ -57,7 +57,7 @@ const Applied = () => {
       <CommonModal
         open={open}
         onClose={() => setOpen(false)}
-        size={modalType === "cancel" ? "sm" : "md"}
+        size={modalType === "cancel" ? "sm" : "lg"}
         type={modalType}
       />
     </>

@@ -11,7 +11,7 @@ const CommonModal = ({ open, onClose, type, size = "md", data }: any) => {
       case "md":
         return 600;
       case "lg":
-        return 900;
+        return 700;
       case "xl":
         return 1200;
       default:
