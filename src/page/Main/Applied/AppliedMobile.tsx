@@ -11,7 +11,7 @@ const AppliedMobile = ({ data, onCancel, onViewDetail }: any) => {
     >
       {data?.map((item: any) => (
         <Box
-          key={item.application_no}
+          key={item.applicationNumber}
           sx={{
             backgroundColor: "#fff",
             borderRadius: "9px",
@@ -34,19 +34,6 @@ const AppliedMobile = ({ data, onCancel, onViewDetail }: any) => {
                 borderBottom: "1px solid #eeeeee",
               }}
             >
-              <Box
-                component="img"
-                src={item.company_logo}
-                alt={item.company_name}
-                sx={{
-                  width: "36px",
-                  height: "36px",
-                  objectFit: "contain",
-                  border: "1px solid #eeeeee",
-                  borderRadius: "4px",
-                }}
-              />
-
               <Box>
                 <Typography
                   sx={{
@@ -56,7 +43,7 @@ const AppliedMobile = ({ data, onCancel, onViewDetail }: any) => {
                     lineHeight: "18px",
                   }}
                 >
-                  {item.company_name}
+                  {item.symbol}
                 </Typography>
 
                 <Typography
@@ -71,7 +58,7 @@ const AppliedMobile = ({ data, onCancel, onViewDetail }: any) => {
                     borderRadius: "2px",
                   }}
                 >
-                  {item.status}
+                  Applied
                 </Typography>
               </Box>
             </Box>
@@ -80,46 +67,109 @@ const AppliedMobile = ({ data, onCancel, onViewDetail }: any) => {
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr",
+                gridTemplateColumns: "1fr 1fr",
                 py: "10px",
                 borderBottom: "1px solid #eeeeee",
               }}
             >
               <MobileDetail
                 label="Application No."
-                value={item.application_no}
+                value={item.applicationNumber}
               />
 
               <MobileDetail
                 label="Amount Invested"
-                value={item.amount_invested}
-                align="center"
+                value={
+                  item.amount ? `₹${item.amount.toLocaleString("en-IN")}` : "-"
+                }
+                align="right"
               />
+            </Box>
 
-              <MobileDetail label="BID 1" value={item.bid_id} align="right" />
+            {/* Bids */}
+            <Box
+              sx={{
+                py: "10px",
+                borderBottom: "1px solid #eeeeee",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "9px",
+                  color: "#858585",
+                  lineHeight: "13px",
+                  mb: "7px",
+                }}
+              >
+                Bids
+              </Typography>
+
+              {item.bidList?.map((bid: any, index: number) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    py: "6px",
+                    px: "8px",
+                    mb: index !== item.bidList.length - 1 ? "5px" : 0,
+                    backgroundColor: "#f7f9fa",
+                    borderRadius: "5px",
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      sx={{
+                        fontSize: "10px",
+                        fontWeight: 500,
+                        color: "#353844",
+                      }}
+                    >
+                      BID {index + 1}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontSize: "10px",
+                        color: "#858585",
+                        mt: "2px",
+                      }}
+                    >
+                      {bid.bidQty} Qty × ₹{bid.bidPrice}
+                    </Typography>
+                  </Box>
+
+                  <Typography
+                    sx={{
+                      fontSize: "11px",
+                      fontWeight: 500,
+                      color: "#353844",
+                    }}
+                  >
+                    ₹{Number(bid.amount || 0).toLocaleString("en-IN")}
+                  </Typography>
+                </Box>
+              ))}
             </Box>
 
             {/* Transaction Date */}
             <MobileRow label="Transaction Date" value={item.transaction_date} />
 
             {/* Order Category */}
-            <MobileRow label="Order Category" value={item.order_category} />
+            <MobileRow label="Order Category" value={item.category} />
 
             {/* Mandate */}
-            <MobileRow
-              label="Mandate Payment Remark"
-              value={item.mandate_payment_remark}
-            />
+            <MobileRow label="Mandate Payment Remark" value={item.bseRemark} />
 
             {/* UPI */}
-            <MobileRow label="UPI Id" value={item.upi_id} />
+            <MobileRow label="UPI Id" value={item.upiid} />
 
-            {/* Subscription */}
-            <MobileRow
-              label="Overall Subscription"
-              value={item.overall_subscription}
-              last
-            />
+            {/* Client Name */}
+            <MobileRow label="Client Name" value={item.clientName} />
+
+            {/* PAN */}
+            <MobileRow label="PAN" value={item.panNo} last />
           </Box>
 
           {/* Actions */}

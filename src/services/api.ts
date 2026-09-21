@@ -21,6 +21,12 @@ export const IpoClientDetailsApi = (panNo: string) => {
 export const PlaceIpoOrderApi = (payload: any) => {
   return commonApi("IPO/PlaceIpoOrder", payload, "POST");
 };
+export const myIPOApplicationsApi = (payload: any) => {
+  return commonApi("IPO/GetMyIPOApplications", payload, "POST");
+};
+export const GetIPOAppEnquiryApi = (payload: any) => {
+  return commonApi("IPO/GetIPOAppEnquiry", payload, "POST");
+};
 
 // export const verifyOtpApi = (mobileNo: string, otp: string) => {
 //   return commonApi("Auth/CommonSendOrVerifyOTP", {

@@ -24,7 +24,7 @@ const CommonModal = ({ open, onClose, type, size = "md", data }: any) => {
       case "apply":
         return <ApplyModal data={data} onClose={onClose} />;
       case "details":
-        return <ViewDetails onClose={onClose} />;
+        return <ViewDetails onClose={onClose} data={data} />;
 
       case "cancel":
         return (

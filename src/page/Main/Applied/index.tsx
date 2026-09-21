@@ -1,39 +1,64 @@
 import { useMediaQuery, useTheme } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CommonModal from "../../../components/Modal";
 import AppliedWeb from "./AppliedWeb";
 import AppliedMobile from "./AppliedMobile";
-
-const appliedData = [
-  {
-    company_name: "Capital Numbers Infotech Ltd",
-    company_logo:
-      "https://pascal-media.trendlyne.com/profilepicture/3625755_profilepicture_3fd645a5.jpg",
-    status: "Applied",
-    application_no: "52002780",
-    amount_invested: "1,05,200",
-    bid_id: "400 shares",
-    transaction_date: "21 Jan 2025 | 10:25 pm",
-    order_category: "Retail",
-    mandate_payment_remark: "-",
-    upi_id: "9920969697@upi",
-    overall_subscription: "8.6x",
-    ipo_id: 2239,
-  },
-];
+import { myIPOApplicationsApi } from "../../../services/api";
 
 const Applied = () => {
   const [open, setOpen] = useState(false);
   const [modalType, setModalType] = useState<"cancel" | "details">("cancel");
+  const [appliedData, setAppliedData] = useState<any[]>([]);
+  const [selectedData, setSelectedData] = useState<any>(null);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const handleCancel = () => {
+  useEffect(() => {
+    const ipoDetails = async () => {
+      try {
+        const payload = {
+          panno: "ALAPD6986B",
+        };
+
+        const response = await myIPOApplicationsApi(payload);
+
+        console.log("IPO Order Response:", response);
+
+        const result = response ?? [];
+
+        const formattedData = result.map((item: any) => ({
+          ...item,
+
+          transaction_date: item.createdDatetime
+            ? new Date(item.createdDatetime).toLocaleString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })
+            : "-",
+        }));
+
+        setAppliedData(formattedData);
+      } catch (error) {
+        console.error("Failed to fetch IPO applications:", error);
+      }
+    };
+
+    ipoDetails();
+  }, []);
+
+  const handleCancel = (item: any) => {
+    setSelectedData(item);
     setModalType("cancel");
     setOpen(true);
   };
 
-  const handleViewDetail = () => {
+  const handleViewDetail = (item: any) => {
+    setSelectedData(item);
     setModalType("details");
     setOpen(true);
   };
@@ -59,6 +84,7 @@ const Applied = () => {
         onClose={() => setOpen(false)}
         size={modalType === "cancel" ? "sm" : "lg"}
         type={modalType}
+        data={selectedData}
       />
     </>
   );

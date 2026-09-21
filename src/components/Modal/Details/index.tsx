@@ -52,10 +52,42 @@ const data = [
   },
 ];
 
-const ViewDetails = ({ onClose }: { onClose: () => void }) => {
+const ViewDetails = ({
+  onClose,
+  propsData,
+}: {
+  onClose: () => void;
+  propsData: any;
+}) => {
+  console.log("data ViewDetails", propsData);
+  // const [data, setData] = useState([]);
+
   const theme = useTheme();
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // useEffect(() => {
+  //   const ipoDetails = async () => {
+  //     try {
+  //       const payload = {
+  //         scripID: "NSE",
+  //         applicationNos: ["46973362"],
+  //       };
+
+  //       const response = await myIPOApplicationsApi(payload);
+
+  //       console.log("IPO Order Response:", response);
+
+  //       const result = response ?? [];
+
+  //       // setAppliedData(formattedData);
+  //     } catch (error) {
+  //       console.error("Failed to fetch IPO applications:", error);
+  //     }
+  //   };
+
+  //   ipoDetails();
+  // }, []);
 
   const ipo = data[0];
   const bid = ipo.bids?.[0];
