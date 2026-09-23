@@ -7,50 +7,8 @@ import {
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-
-const data = [
-  {
-    scripid: "VEEGALAND",
-    applicationno: "41844498",
-    category: "IND",
-    applicantname: "NITIN DEEPCHAND SELOT",
-    depository: "CDSL",
-    dpid: "0",
-    clientbenfid: "1202350000281511",
-    chequereceivedflag: "Y",
-    chequeamount: "14980.0000",
-    chequeno: "",
-    panno: "AMGPS5982F",
-    bankname: "8888",
-    location: "UPIIDL",
-    accountnumber_upiid: "v9404283094@upi",
-    ifsccode: "",
-    referenceno: "",
-    entrydatetime: "15-09-2026 16:57:15",
-    lastmodifieddatetime: "15-09-2026 16:57:15",
-    dpstatus: "S",
-    dpremarks: "",
-    sponsorbankpaystatus: "10",
-    sponsorbankactiontime: "15-09-2026 21:51:21",
-    sponsorbankamtblocked: "14980.00",
-    rejectreason: "10-- REQUEST SENT TO INVESTORS UPI APP FOR ACCEPTANCE",
-    loginid: "",
-    branchcode: "39",
-    subbrokercode: "",
-    errorcode: "0",
-    message: "",
-    bids: [
-      {
-        bidid: "1293708612",
-        quantity: "107.0000",
-        rate: "140.0000",
-        cuttoffflag: "0",
-        orderno: "2172775",
-        orderstatus: "N",
-      },
-    ],
-  },
-];
+import { GetIPOAppEnquiryApi } from "../../../services/api";
+import { useEffect, useState } from "react";
 
 const ViewDetails = ({
   onClose,
@@ -60,48 +18,46 @@ const ViewDetails = ({
   propsData: any;
 }) => {
   console.log("data ViewDetails", propsData);
-  // const [data, setData] = useState([]);
+  const [apiData, setApiData] = useState([]);
 
   const theme = useTheme();
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // useEffect(() => {
-  //   const ipoDetails = async () => {
-  //     try {
-  //       const payload = {
-  //         scripID: "NSE",
-  //         applicationNos: ["46973362"],
-  //       };
+  useEffect(() => {
+    const ipoDetails = async () => {
+      try {
+        const payload = {
+          scripID: "NSE",
+          applicationNos: ["46973362"], //propsData.applicationNumber
+        };
 
-  //       const response = await myIPOApplicationsApi(payload);
+        const response = await GetIPOAppEnquiryApi(payload);
 
-  //       console.log("IPO Order Response:", response);
+        console.log("IPO Order Response:", response);
 
-  //       const result = response ?? [];
+        const result = response;
 
-  //       // setAppliedData(formattedData);
-  //     } catch (error) {
-  //       console.error("Failed to fetch IPO applications:", error);
-  //     }
-  //   };
+        console.log(result[0]);
+        setApiData(result);
+      } catch (error) {
+        console.error("Failed to fetch IPO applications:", error);
+      }
+    };
 
-  //   ipoDetails();
-  // }, []);
+    ipoDetails();
+  }, [propsData]);
 
-  const ipo = data[0];
-  const bid = ipo.bids?.[0];
+  const ipo = apiData[0];
+  // const bid = ipo.bids?.[0];
 
-  const bidAmount = Number(ipo.sponsorbankamtblocked || 0).toLocaleString(
-    "en-IN",
-    {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    },
-  );
+  const bidAmount = Number(ipo.amount || 0).toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
-  const bidQuantity = Number(bid?.quantity || 0);
-  const bidRate = Number(bid?.rate || 0);
+  // const bidQuantity = Number(bid?.quantity || 0);
+  // const bidRate = Number(bid?.rate || 0);
 
   const formatDate = (dateTime: string) => {
     if (!dateTime) return "-";
@@ -400,10 +356,136 @@ const ViewDetails = ({
             value={formatDate(ipo.entrydatetime)}
           />
 
-          <SummaryItem
+          {/* <SummaryItem
             label="Bid 1 Quantity / Price"
             value={`${bidQuantity} / ₹${bidRate.toFixed(2)}`}
-          />
+          /> */}
+          {/* Bid Details */}
+          <Box
+            sx={{
+              mt: 2,
+              pt: 2,
+              borderTop: "1px solid #e5e5e5",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontWeight: 500,
+                mb: 1.5,
+              }}
+            >
+              Bid Details
+            </Typography>
+
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                },
+                gap: 1.5,
+              }}
+            >
+              {ipo.bids?.map((bid: any, index: number) => (
+                <Box
+                  key={bid.bidid || index}
+                  sx={{
+                    border: "1px solid #e5e5e5",
+                    borderRadius: 1.5,
+                    p: 1.5,
+                    backgroundColor: "#fafafa",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: 13,
+                      fontWeight: 500,
+                      mb: 1,
+                    }}
+                  >
+                    Bid {index + 1}
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 2,
+                    }}
+                  >
+                    <Box>
+                      <Typography
+                        sx={{
+                          fontSize: 10,
+                          color: "#999",
+                        }}
+                      >
+                        Quantity
+                      </Typography>
+
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          mt: 0.3,
+                        }}
+                      >
+                        {Number(bid.quantity || 0)}
+                      </Typography>
+                    </Box>
+
+                    <Box>
+                      <Typography
+                        sx={{
+                          fontSize: 10,
+                          color: "#999",
+                        }}
+                      >
+                        Bid Price
+                      </Typography>
+
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          mt: 0.3,
+                        }}
+                      >
+                        ₹{Number(bid.rate || 0).toFixed(2)}
+                      </Typography>
+                    </Box>
+
+                    <Box>
+                      <Typography
+                        sx={{
+                          fontSize: 10,
+                          color: "#999",
+                        }}
+                      >
+                        Amount
+                      </Typography>
+
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          mt: 0.3,
+                        }}
+                      >
+                        ₹
+                        {(
+                          Number(bid.quantity || 0) * Number(bid.rate || 0)
+                        ).toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </Box>
           <SummaryItem label="Allotment Date" value="---x---" />
 
           <SummaryItem label="Refund Date" value="---x---" />

@@ -189,7 +189,7 @@ export const upcomingColumns = (navigate: any) => [
       >
         <Box
           component="img"
-          src={row.company_logo}
+          src={row.company_logo || null}
           alt={row.company_name}
           sx={{
             width: "36px",

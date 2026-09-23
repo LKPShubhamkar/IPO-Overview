@@ -1,7 +1,7 @@
 import { Box, Modal } from "@mui/material";
 import ApplyModal from "./Apply/index";
 import Cancel from "./Cancelled/cancel";
-import ViewDetails from "./Details";
+import ViewDetails from "./Details/index";
 
 const CommonModal = ({ open, onClose, type, size = "md", data }: any) => {
   const getWidth = () => {
@@ -24,7 +24,7 @@ const CommonModal = ({ open, onClose, type, size = "md", data }: any) => {
       case "apply":
         return <ApplyModal data={data} onClose={onClose} />;
       case "details":
-        return <ViewDetails onClose={onClose} data={data} />;
+        return <ViewDetails onClose={onClose} propsData={data} />;
 
       case "cancel":
         return (
