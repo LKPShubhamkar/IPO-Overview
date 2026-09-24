@@ -25,7 +25,7 @@ const FinancialOverview = ({ data }: any) => {
         (cell) => cell.textContent?.trim() ?? "",
       );
 
-      const parseNumber = (value) =>
+      const parseNumber = (value: any) =>
         Number(value.replace(/,/g, "").replace("%", "")) || 0;
 
       return {
@@ -75,7 +75,7 @@ const FinancialOverview = ({ data }: any) => {
       dataKey: "margins",
       suffix: "%",
     },
-  ];
+  ] as const;
 
   const activeOption =
     graphOptions.find((item) => item.key === activeGraph) ?? graphOptions[0];

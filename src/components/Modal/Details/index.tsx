@@ -28,36 +28,35 @@ const ViewDetails = ({
     const ipoDetails = async () => {
       try {
         const payload = {
-          scripID: "NSE",
-          applicationNos: ["46973362"], //propsData.applicationNumber
+          scripID: propsData?.symbol,
+          applicationNos: [propsData?.applicationNumber.toString()],
         };
 
         const response = await GetIPOAppEnquiryApi(payload);
 
         console.log("IPO Order Response:", response);
 
-        const result = response;
+        const result = response || [];
 
-        console.log(result[0]);
         setApiData(result);
       } catch (error) {
         console.error("Failed to fetch IPO applications:", error);
       }
     };
 
-    ipoDetails();
+    if (propsData?.symbol && propsData?.applicationNumber) {
+      ipoDetails();
+    }
   }, [propsData]);
 
-  const ipo = apiData[0];
-  // const bid = ipo.bids?.[0];
+  const ipo = apiData[0] || {};
 
   const bidAmount = Number(ipo.amount || 0).toLocaleString("en-IN", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 
-  // const bidQuantity = Number(bid?.quantity || 0);
-  // const bidRate = Number(bid?.rate || 0);
+  const bids = ipo.bids || ipo.bidList || [];
 
   const formatDate = (dateTime: string) => {
     if (!dateTime) return "-";
@@ -101,7 +100,6 @@ const ViewDetails = ({
     <Box
       sx={{
         width: "100%",
-        // minHeight: "100vh",
         backgroundColor: "#fff",
         color: "#414451",
       }}
@@ -139,7 +137,7 @@ const ViewDetails = ({
               color: "#7bbd00",
             }}
           >
-            {ipo.scripid.substring(0, 2)}
+            {ipo.scripid?.substring(0, 2) || "--"}
           </Box>
 
           <Box>
@@ -149,7 +147,7 @@ const ViewDetails = ({
                 fontWeight: 500,
               }}
             >
-              {ipo.scripid}
+              {ipo.scripid || "-"}
             </Typography>
 
             <Typography
@@ -227,12 +225,15 @@ const ViewDetails = ({
           justifyContent: "space-between",
           px: 2.5,
           mt: 2.5,
+          gap: 2,
+          flexWrap: "wrap",
         }}
       >
         <Typography sx={{ fontSize: 12 }}>
           <Box component="span" sx={{ color: "#999", mr: 1 }}>
             Bid Amount
           </Box>
+
           <Box component="span" sx={{ fontSize: 14 }}>
             ₹{bidAmount}
           </Box>
@@ -242,6 +243,7 @@ const ViewDetails = ({
           <Box component="span" sx={{ color: "#999", mr: 1 }}>
             Submitted on
           </Box>
+
           <Box component="span" sx={{ fontSize: 14 }}>
             {formatDate(ipo.entrydatetime)}
           </Box>
@@ -260,11 +262,11 @@ const ViewDetails = ({
           flexDirection: isMobile ? "column" : "row",
         }}
       >
-        {/* 40% */}
+        {/* Left */}
         <Box
           sx={{
             p: 2,
-            flex: isMobile ? "auto" : "0 0 45%",
+            flex: isMobile ? "auto" : "0 0 50%",
             minWidth: 0,
           }}
         >
@@ -283,11 +285,11 @@ const ViewDetails = ({
           <InfoRow label="Category" value={ipo.category || "-"} />
         </Box>
 
-        {/* 60% */}
+        {/* Right */}
         <Box
           sx={{
             p: 2,
-            flex: isMobile ? "auto" : "0 0 55%",
+            flex: isMobile ? "auto" : "0 0 50%",
             minWidth: 0,
             backgroundColor: "#f3f6fa",
           }}
@@ -340,7 +342,11 @@ const ViewDetails = ({
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(4, 1fr)",
+            },
             columnGap: 2,
             rowGap: 1.5,
           }}
@@ -349,20 +355,20 @@ const ViewDetails = ({
 
           <SummaryItem label="Order Type" value="IPO" />
 
-          <SummaryItem label="Application Number" value={ipo.applicationno} />
+          <SummaryItem
+            label="Application Number"
+            value={ipo.applicationno || "-"}
+          />
 
           <SummaryItem
             label="Order Time"
             value={formatDate(ipo.entrydatetime)}
           />
 
-          {/* <SummaryItem
-            label="Bid 1 Quantity / Price"
-            value={`${bidQuantity} / ₹${bidRate.toFixed(2)}`}
-          /> */}
           {/* Bid Details */}
           <Box
             sx={{
+              gridColumn: "1 / -1",
               mt: 2,
               pt: 2,
               borderTop: "1px solid #e5e5e5",
@@ -389,116 +395,117 @@ const ViewDetails = ({
                 gap: 1.5,
               }}
             >
-              {ipo.bids?.map((bid: any, index: number) => (
-                <Box
-                  key={bid.bidid || index}
-                  sx={{
-                    border: "1px solid #e5e5e5",
-                    borderRadius: 1.5,
-                    p: 1.5,
-                    backgroundColor: "#fafafa",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: 13,
-                      fontWeight: 500,
-                      mb: 1,
-                    }}
-                  >
-                    Bid {index + 1}
-                  </Typography>
+              {bids.map((bid: any, index: number) => {
+                const quantity = Number(bid.quantity ?? bid.bidQty ?? 0);
 
+                const rate = Number(bid.rate ?? bid.bidPrice ?? 0);
+
+                const amount = quantity * rate;
+
+                return (
                   <Box
+                    key={bid.bidid || index}
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      gap: 2,
+                      border: "1px solid #e5e5e5",
+                      borderRadius: 1.5,
+                      p: 1.5,
+                      backgroundColor: "#fafafa",
                     }}
                   >
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontSize: 10,
-                          color: "#999",
-                        }}
-                      >
-                        Quantity
-                      </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 13,
+                        fontWeight: 500,
+                        mb: 1,
+                      }}
+                    >
+                      Bid {index + 1}
+                    </Typography>
 
-                      <Typography
-                        sx={{
-                          fontSize: 14,
-                          mt: 0.3,
-                        }}
-                      >
-                        {Number(bid.quantity || 0)}
-                      </Typography>
-                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: 2,
+                      }}
+                    >
+                      <Box>
+                        <Typography
+                          sx={{
+                            fontSize: 10,
+                            color: "#999",
+                          }}
+                        >
+                          Quantity
+                        </Typography>
 
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontSize: 10,
-                          color: "#999",
-                        }}
-                      >
-                        Bid Price
-                      </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: 14,
+                            mt: 0.3,
+                          }}
+                        >
+                          {quantity}
+                        </Typography>
+                      </Box>
 
-                      <Typography
-                        sx={{
-                          fontSize: 14,
-                          mt: 0.3,
-                        }}
-                      >
-                        ₹{Number(bid.rate || 0).toFixed(2)}
-                      </Typography>
-                    </Box>
+                      <Box>
+                        <Typography
+                          sx={{
+                            fontSize: 10,
+                            color: "#999",
+                          }}
+                        >
+                          Bid Price
+                        </Typography>
 
-                    <Box>
-                      <Typography
-                        sx={{
-                          fontSize: 10,
-                          color: "#999",
-                        }}
-                      >
-                        Amount
-                      </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: 14,
+                            mt: 0.3,
+                          }}
+                        >
+                          ₹{rate.toFixed(2)}
+                        </Typography>
+                      </Box>
 
-                      <Typography
-                        sx={{
-                          fontSize: 14,
-                          mt: 0.3,
-                        }}
-                      >
-                        ₹
-                        {(
-                          Number(bid.quantity || 0) * Number(bid.rate || 0)
-                        ).toLocaleString("en-IN", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                      </Typography>
+                      <Box>
+                        <Typography
+                          sx={{
+                            fontSize: 10,
+                            color: "#999",
+                          }}
+                        >
+                          Amount
+                        </Typography>
+
+                        <Typography
+                          sx={{
+                            fontSize: 14,
+                            mt: 0.3,
+                          }}
+                        >
+                          ₹
+                          {amount.toLocaleString("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </Typography>
+                      </Box>
                     </Box>
                   </Box>
-                </Box>
-              ))}
+                );
+              })}
             </Box>
           </Box>
-          <SummaryItem label="Allotment Date" value="---x---" />
+
+          {/* <SummaryItem label="Allotment Date" value="---x---" />
 
           <SummaryItem label="Refund Date" value="---x---" />
+
           <SummaryItem label="Transfer Date" value="---x---" />
-          <SummaryItem label="Listing Date" value="---x---" />
 
-          {/* <SummaryItem label="Bid ID" value={bid?.bidid || "-"} />
-
-          <SummaryItem label="Order Number" value={bid?.orderno || "-"} />
-
-          <SummaryItem label="Bid Status" value={bid?.orderstatus || "-"} />
-
-          <SummaryItem label="Depository" value={ipo.depository || "-"} /> */}
+          <SummaryItem label="Listing Date" value="---x---" /> */}
 
           <SummaryItem
             label="CDSL Demat Account"
@@ -508,24 +515,6 @@ const ViewDetails = ({
           <SummaryItem label="DP ID" value={ipo.dpid || "-----"} />
 
           <SummaryItem label="Client PAN" value={ipo.panno || "-"} />
-
-          {/* <SummaryItem label="Sponsor Bank" value={ipo.bankname || "-"} />
-
-          <SummaryItem label="Amount Blocked" value={`₹${bidAmount}`} />
-
-          <SummaryItem
-            label="Sponsor Bank Status"
-            value={ipo.sponsorbankpaystatus || "-"}
-          />
-
-          <SummaryItem label="Mandate Status" value={ipo.rejectreason || "-"} />
-
-          <SummaryItem
-            label="Sponsor Bank Action Time"
-            value={formatDate(ipo.sponsorbankactiontime)}
-          />
-
-          <SummaryItem label="Branch Code" value={ipo.branchcode || "-"} /> */}
         </Box>
       </Box>
     </Box>

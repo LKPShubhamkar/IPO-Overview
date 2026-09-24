@@ -27,13 +27,3 @@ export const myIPOApplicationsApi = (payload: any) => {
 export const GetIPOAppEnquiryApi = (payload: any) => {
   return commonApi("IPO/GetIPOAppEnquiry", payload, "POST");
 };
-
-// export const verifyOtpApi = (mobileNo: string, otp: string) => {
-//   return commonApi("Auth/CommonSendOrVerifyOTP", {
-//     sourceType: "GIFTCity",
-//     mobileNo,
-//     emailId: "",
-//     otp,
-//     action: "Verify",
-//   });
-// };

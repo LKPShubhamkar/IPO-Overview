@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [pan, setPan] = useState("");
   const [subbroker, setSubbroker] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
 
   const labelStyle = {
     fontSize: 11,
@@ -54,23 +58,25 @@ const Login = () => {
 
     setLoading(true);
 
-    // API call here
-    // const response = await fetchSubbrokerApi(pan);
-    // setSubbroker(response?.body?.subbroker);
+    try {
+      // API call here
+      // const response = await fetchSubbrokerApi(pan);
 
-    setSubbroker("LKP Securities Ltd.");
-    setLoading(false);
-  };
+      // Example backend response
+      const response = {
+        subbroker: "LKP Securities Ltd.",
+        email: "user@example.com",
+        mobile: "9898989898",
+      };
 
-  const handleSendOtp = async () => {
-    if (!subbroker) return;
+      setSubbroker(response.subbroker);
+      setEmail(response.email);
+      setMobile(response.mobile);
 
-    setLoading(true);
-
-    // Send OTP API here
-
-    setOtpSent(true);
-    setLoading(false);
+      // Backend sends OTP automatically
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogin = async () => {
@@ -78,9 +84,18 @@ const Login = () => {
 
     setLoading(true);
 
-    // Login API here
+    try {
+      // Login / OTP verification API here
+      // const response = await verifyOtpApi({
+      //   pan,
+      //   otp,
+      // });
 
-    setLoading(false);
+      // If OTP is verified successfully
+      navigate("/ipos");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -133,6 +148,7 @@ const Login = () => {
           value={pan}
           onChange={(e) => setPan(e.target.value.toUpperCase())}
           placeholder="Enter PAN"
+          disabled={!!subbroker}
           slotProps={{
             htmlInput: {
               maxLength: 10,
@@ -179,39 +195,28 @@ const Login = () => {
               />
             </Box>
 
-            {!otpSent ? (
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={handleSendOtp}
-                disabled={loading}
-                sx={buttonStyle}
-              >
-                {loading ? "Please wait..." : "Send OTP"}
-              </Button>
-            ) : (
-              <>
-                <Typography
-                  sx={{
-                    mt: 1.5,
-                    fontSize: 11,
-                    color: "#777",
-                  }}
-                >
-                  OTP sent to your registered mobile number
-                </Typography>
+            <Typography
+              sx={{
+                mt: 1.5,
+                fontSize: 11,
+                color: "#777",
+              }}
+            >
+              OTP sent to your registered
+              {mobile ? ` mobile number ${mobile}` : ""}
+              {mobile && email ? " and" : ""}
+              {email ? ` email ${email}` : ""}. Please enter the OTP to proceed.
+            </Typography>
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  onClick={handleLogin}
-                  disabled={loading || otp.length !== 6}
-                  sx={buttonStyle}
-                >
-                  {loading ? "Please wait..." : "Login"}
-                </Button>
-              </>
-            )}
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={handleLogin}
+              disabled={loading || otp.length !== 6}
+              sx={buttonStyle}
+            >
+              {loading ? "Please wait..." : "Login"}
+            </Button>
           </>
         )}
       </Box>
