@@ -10,6 +10,32 @@ import CloseIcon from "@mui/icons-material/Close";
 import { GetIPOAppEnquiryApi } from "../../../services/api";
 import { useEffect, useState } from "react";
 
+interface IPOBid {
+  bidid?: string | number;
+  quantity?: number | string;
+  bidQty?: number | string;
+  rate?: number | string;
+  bidPrice?: number | string;
+  amount?: number | string;
+}
+
+interface IPOData {
+  amount?: number | string;
+  bids?: IPOBid[];
+  bidList?: IPOBid[];
+  rejectreason?: string;
+  dpstatus?: string;
+  message?: string;
+  scripid?: string;
+  entrydatetime?: any;
+  accountnumber_upiid?: string;
+  category?: string;
+  applicationno?: any;
+  clientbenfid?: string;
+  dpid?: string;
+  panno?: string;
+}
+
 const ViewDetails = ({
   onClose,
   propsData,
@@ -18,7 +44,7 @@ const ViewDetails = ({
   propsData: any;
 }) => {
   console.log("data ViewDetails", propsData);
-  const [apiData, setApiData] = useState([]);
+  const [apiData, setApiData] = useState<IPOData[]>([]);
 
   const theme = useTheme();
 

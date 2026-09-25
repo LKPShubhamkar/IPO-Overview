@@ -10,6 +10,10 @@ const Upcoming = ({ data }: any) => {
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const filteredData = data?.filter((item: any) =>
+    item.exchange_flags?.includes("BSE"),
+  );
+
   const handleAction = (item: any) => {
     navigate("/details", {
       state: {
@@ -42,7 +46,7 @@ const Upcoming = ({ data }: any) => {
           minHeight: "100%",
         }}
       >
-        {data?.map((item: any) => {
+        {filteredData?.map((item: any) => {
           const preApplyEligible = isPreApplyEligible(item.bid_start_date);
 
           return (
@@ -71,7 +75,7 @@ const Upcoming = ({ data }: any) => {
     >
       <CustomTable
         columns={upcomingColumns(navigate)}
-        rows={data || []}
+        rows={filteredData || []}
         getRowId={(row: any) => row.ipo_id}
       />
     </Box>

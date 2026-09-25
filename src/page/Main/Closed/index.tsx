@@ -10,6 +10,9 @@ const Closed = ({ data }: any) => {
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const filteredData = data?.filter((item: any) =>
+    item.exchange_flags?.includes("BSE"),
+  );
   const handleAction = (item: any) => {
     navigate("/details", {
       state: {
@@ -27,7 +30,7 @@ const Closed = ({ data }: any) => {
           minHeight: "100%",
         }}
       >
-        {data?.map((item: any) => (
+        {filteredData?.map((item: any) => (
           <IpoMobileCard
             key={item.ipo_id}
             item={item}
@@ -52,7 +55,7 @@ const Closed = ({ data }: any) => {
     >
       <CustomTable
         columns={closedColumns}
-        rows={data || []}
+        rows={filteredData || []}
         getRowId={(row: any) => row.ipo_id}
       />
     </Box>

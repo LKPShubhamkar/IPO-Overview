@@ -10,6 +10,10 @@ const Ongoing = ({ data }: any) => {
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const filteredData = data?.filter((item: any) =>
+    item.exchange_flags?.includes("BSE"),
+  );
+
   const handleAction = (item: any) => {
     navigate("/details", {
       state: {
@@ -28,7 +32,7 @@ const Ongoing = ({ data }: any) => {
       }}
     >
       {isMobile ? (
-        data?.map((item: any) => (
+        filteredData?.map((item: any) => (
           <IpoMobileCard
             key={item.ipo_id}
             item={item}
@@ -41,7 +45,7 @@ const Ongoing = ({ data }: any) => {
       ) : (
         <CustomTable
           columns={ongoingColumns(navigate)}
-          rows={data || []}
+          rows={filteredData || []}
           getRowId={(row: any) => row.ipo_id}
         />
       )}
