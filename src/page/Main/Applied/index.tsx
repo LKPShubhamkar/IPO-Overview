@@ -4,6 +4,7 @@ import CommonModal from "../../../components/Modal";
 import AppliedWeb from "./AppliedWeb";
 import AppliedMobile from "./AppliedMobile";
 import { myIPOApplicationsApi } from "../../../services/api";
+import { useAuth } from "../../../context/AuthContext";
 
 const Applied = () => {
   const [open, setOpen] = useState(false);
@@ -12,13 +13,15 @@ const Applied = () => {
   const [selectedData, setSelectedData] = useState<any>(null);
 
   const theme = useTheme();
+  const { auth } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
+    if (!auth?.encryptedPan) return;
     const ipoDetails = async () => {
       try {
         const payload = {
-          panno: "ALAPD6986B",
+          panno: auth.encryptedPan,
         };
 
         const response = await myIPOApplicationsApi(payload);
@@ -29,7 +32,6 @@ const Applied = () => {
 
         const formattedData = result.map((item: any) => ({
           ...item,
-
           transaction_date: item.createdDatetime
             ? new Date(item.createdDatetime).toLocaleString("en-IN", {
                 day: "2-digit",
@@ -49,7 +51,7 @@ const Applied = () => {
     };
 
     ipoDetails();
-  }, []);
+  }, [auth?.encryptedPan]);
 
   const handleCancel = (item: any) => {
     setSelectedData(item);

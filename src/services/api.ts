@@ -27,3 +27,9 @@ export const myIPOApplicationsApi = (payload: any) => {
 export const GetIPOAppEnquiryApi = (payload: any) => {
   return commonApi("IPO/GetIPOAppEnquiry", payload, "POST");
 };
+export const IPOLoginApi = (payload: any) => {
+  return commonApi("IPO/IPOLogin", payload, "POST");
+};
+export const IPOLoginVerifyOTPApi = (payload: any) => {
+  return commonApi("IPO/IPOLoginVerifyOTP", payload, "POST");
+};

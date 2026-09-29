@@ -1,16 +1,21 @@
 import { useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { IPOLoginApi, IPOLoginVerifyOTPApi } from "../../services/api";
+import { maskEmail, maskMobile } from "../../helper/utils";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
-
+  const { setAuth } = useAuth();
   const [pan, setPan] = useState("");
+  const [encryptedPan, setEncryptedPan] = useState("");
   const [subbroker, setSubbroker] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const labelStyle = {
     fontSize: 11,
@@ -56,27 +61,34 @@ const Login = () => {
   const handleGetDetails = async () => {
     if (!pan || pan.length !== 10) return;
 
+    setError("");
     setLoading(true);
 
     try {
-      // API call here
-      // const response = await fetchSubbrokerApi(pan);
+      const response = await IPOLoginApi({ panno: pan });
 
-      // Example backend response
-      const response = {
-        subbroker: "LKP Securities Ltd.",
-        email: "user@example.com",
-        mobile: "9898989898",
-      };
+      if (!response?.isSuccess) {
+        setError(response?.message || "Client details not found.");
+        return;
+      }
 
-      setSubbroker(response.subbroker);
-      setEmail(response.email);
-      setMobile(response.mobile);
+      const data = response?.data;
 
-      // Backend sends OTP automatically
+      setSubbroker(data?.ipoSbCode || "");
+      setEmail(data?.emailId || "");
+      setMobile(data?.mobileNo || "");
+      setEncryptedPan(data?.panNo || "");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBack = () => {
+    setPan("");
+    setSubbroker("");
+    setEmail("");
+    setMobile("");
+    setOtp("");
   };
 
   const handleLogin = async () => {
@@ -85,13 +97,25 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Login / OTP verification API here
-      // const response = await verifyOtpApi({
-      //   pan,
-      //   otp,
-      // });
+      const response = await IPOLoginVerifyOTPApi({
+        PanNo: encryptedPan,
+        otp,
+      });
 
-      // If OTP is verified successfully
+      if (!response?.isSuccess) {
+        setError(response?.message || "Invalid OTP.");
+        return;
+      }
+
+      setAuth({
+        pan,
+        encryptedPan,
+        subbroker,
+        mobile,
+        email,
+        loginType: "PAN",
+      });
+
       navigate("/ipos");
     } finally {
       setLoading(false);
@@ -146,7 +170,10 @@ const Login = () => {
         <TextField
           fullWidth
           value={pan}
-          onChange={(e) => setPan(e.target.value.toUpperCase())}
+          onChange={(e) => {
+            setPan(e.target.value.toUpperCase());
+            setError("");
+          }}
           placeholder="Enter PAN"
           disabled={!!subbroker}
           slotProps={{
@@ -156,6 +183,18 @@ const Login = () => {
           }}
           sx={inputStyle}
         />
+
+        {error && (
+          <Typography
+            sx={{
+              mt: 1,
+              fontSize: 12,
+              color: "#d32f2f",
+            }}
+          >
+            {error}
+          </Typography>
+        )}
 
         {!subbroker && (
           <Button
@@ -178,7 +217,15 @@ const Login = () => {
             </Box>
 
             <Box sx={{ mt: 2 }}>
-              <Typography sx={labelStyle}>OTP</Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              >
+                <Typography sx={{ ...labelStyle, mb: 0 }}>OTP</Typography>
+              </Box>
 
               <TextField
                 fullWidth
@@ -193,30 +240,62 @@ const Login = () => {
                 }}
                 sx={inputStyle}
               />
+
+              {(mobile || email) && (
+                <Typography
+                  sx={{
+                    mt: 1.5,
+                    fontSize: 11,
+                    color: "#777",
+                  }}
+                >
+                  OTP sent to your registered
+                  {mobile ? ` mobile number ${maskMobile(mobile)}` : ""}
+                  {mobile && email ? " and" : ""}
+                  {email ? ` email ${maskEmail(email)}` : ""}. Please enter the
+                  OTP to proceed.
+                </Typography>
+              )}
             </Box>
 
-            <Typography
-              sx={{
-                mt: 1.5,
-                fontSize: 11,
-                color: "#777",
-              }}
-            >
-              OTP sent to your registered
-              {mobile ? ` mobile number ${mobile}` : ""}
-              {mobile && email ? " and" : ""}
-              {email ? ` email ${email}` : ""}. Please enter the OTP to proceed.
-            </Typography>
+            <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={handleBack}
+                sx={{
+                  height: 42,
+                  borderRadius: 1,
+                  borderColor: "#0066b3",
+                  color: "#0066b3",
+                  textTransform: "none",
+                  fontSize: 13,
+                }}
+              >
+                Back
+              </Button>
 
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={handleLogin}
-              disabled={loading || otp.length !== 6}
-              sx={buttonStyle}
-            >
-              {loading ? "Please wait..." : "Login"}
-            </Button>
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={handleLogin}
+                disabled={loading || otp.length !== 6}
+                sx={{
+                  height: 42,
+                  borderRadius: 1,
+                  backgroundColor: "#0066b3",
+                  textTransform: "none",
+                  fontSize: 13,
+                  boxShadow: "none",
+                  "&:hover": {
+                    backgroundColor: "#005a9e",
+                    boxShadow: "none",
+                  },
+                }}
+              >
+                {loading ? "Please wait..." : "Login"}
+              </Button>
+            </Box>
           </>
         )}
       </Box>
