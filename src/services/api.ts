@@ -8,14 +8,8 @@ export const fetchIpoDetailApi = (ipoId: number) => {
   return commonApi(`Fundamental/IPODetail/${ipoId}`, {}, "GET");
 };
 
-export const IpoClientDetailsApi = (panNo: string) => {
-  return commonApi(
-    "IPO/GetIpoClientDetails",
-    {
-      panNo,
-    },
-    "POST",
-  );
+export const IpoClientDetailsApi = (payload: any) => {
+  return commonApi("IPO/GetIpoClientDetails", payload, "POST");
 };
 
 export const PlaceIpoOrderApi = (payload: any) => {

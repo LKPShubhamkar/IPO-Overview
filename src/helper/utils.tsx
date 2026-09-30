@@ -1,9 +1,9 @@
-export const maskMobile = (mobile) => {
+export const maskMobile = (mobile: any) => {
   if (!mobile) return "";
   return `******${mobile.slice(-2)}`;
 };
 
-export const maskEmail = (email) => {
+export const maskEmail = (email: any) => {
   if (!email) return "";
 
   const [username, domain] = email.split("@");

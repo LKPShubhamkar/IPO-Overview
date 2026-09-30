@@ -6,11 +6,12 @@ import { IpoClientDetailsApi, PlaceIpoOrderApi } from "../../../services/api";
 import InvestorType from "./InvestorType";
 import BidSection from "./BidSection";
 import UpiSection from "./UpiSection";
+import { useAuth } from "../../../context/AuthContext";
 
 const Apply = ({ data, onClose }: any) => {
   const [clientDetails, setClientDetails] = useState<any>(null);
   const subscriptionHeader = data?.subscription_rate?.subscription_header ?? [];
-
+  const { auth } = useAuth();
   const [category, setCategory] = useState("");
   const [bids, setBids] = useState<any[]>([]);
   const [upiId, setUpiId] = useState("");
@@ -70,7 +71,10 @@ const Apply = ({ data, onClose }: any) => {
   useEffect(() => {
     const getIpoData = async () => {
       try {
-        const response = await IpoClientDetailsApi("ALAPD6986B");
+        const payload = {
+          panno: auth.encryptedPan,
+        };
+        const response = await IpoClientDetailsApi(payload);
 
         console.log(response, "response modal");
 
@@ -81,7 +85,7 @@ const Apply = ({ data, onClose }: any) => {
     };
 
     getIpoData();
-  }, []);
+  }, [auth.encryptedPan]);
 
   useEffect(() => {
     if (clientDetails?.upiId) {
