@@ -2,8 +2,16 @@ import { Box, Modal } from "@mui/material";
 import ApplyModal from "./Apply/index";
 import Cancel from "./Cancelled/cancel";
 import ViewDetails from "./Details/index";
+import Confirmation from "./Confirmation";
 
-const CommonModal = ({ open, onClose, type, size = "md", data }: any) => {
+const CommonModal = ({
+  open,
+  onClose,
+  type,
+  size = "md",
+  data,
+  onConfirm,
+}: any) => {
   const getWidth = () => {
     switch (size) {
       case "sm":
@@ -22,7 +30,7 @@ const CommonModal = ({ open, onClose, type, size = "md", data }: any) => {
   const renderContent = () => {
     switch (type) {
       case "apply":
-        return <ApplyModal data={data} onClose={onClose} />;
+        return <ApplyModal onClose={onClose} data={data} />;
       case "details":
         return <ViewDetails onClose={onClose} propsData={data} />;
 
@@ -36,7 +44,10 @@ const CommonModal = ({ open, onClose, type, size = "md", data }: any) => {
             }}
           />
         );
-
+      case "confirmation":
+        return (
+          <Confirmation onClose={onClose} data={data} onConfirm={onConfirm} />
+        );
       default:
         return null;
     }

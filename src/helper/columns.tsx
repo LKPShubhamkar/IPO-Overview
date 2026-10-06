@@ -468,3 +468,198 @@ export const closedColumns = [
     render: () => "-",
   },
 ];
+
+export const approvedColumns = (handleApproval: any) => [
+  {
+    key: "companyName",
+    label: "Company Name",
+    width: "25%",
+    render: (row: any) => (
+      <Box>
+        <Typography
+          sx={{
+            fontSize: "14px",
+            lineHeight: "18px",
+            fontWeight: 500,
+            color: "#353844",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "250px",
+          }}
+        >
+          {row.companyName || "-"}
+        </Typography>
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "7px",
+            mt: "4px",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "10px",
+              color: "#858585",
+            }}
+          >
+            {row.exchange || "-"}
+          </Typography>
+
+          <Typography
+            sx={{
+              fontSize: "10px",
+              color: "#ff8a00",
+              backgroundColor: "#fff3e5",
+              px: "4px",
+              py: "1px",
+              borderRadius: "2px",
+            }}
+          >
+            {row.ipoTypeName || "-"}
+          </Typography>
+
+          <Typography
+            sx={{
+              fontSize: "10px",
+              color: "#858585",
+              backgroundColor: "#f5f5f5",
+              px: "4px",
+              py: "1px",
+              borderRadius: "2px",
+            }}
+          >
+            {row.depository || "-"}
+          </Typography>
+        </Box>
+      </Box>
+    ),
+  },
+
+  {
+    key: "category",
+    label: "Category",
+    width: "8%",
+    render: (row: any) => row.category || "-",
+  },
+
+  {
+    key: "boid",
+    label: "BOID",
+    width: "14%",
+    render: (row: any) => (
+      <Typography
+        sx={{
+          fontSize: "12px",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+        title={row.boid}
+      >
+        {row.boid || "-"}
+      </Typography>
+    ),
+  },
+
+  {
+    key: "upiid",
+    label: "UPI ID",
+    width: "17%",
+    render: (row: any) => (
+      <Typography
+        sx={{
+          fontSize: "12px",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          maxWidth: "180px",
+        }}
+        title={row.upiid}
+      >
+        {row.upiid || "-"}
+      </Typography>
+    ),
+  },
+
+  {
+    key: "bidQty",
+    label: "Bid Qty",
+    width: "8%",
+    render: (row: any) => row.bidQty || "-",
+  },
+
+  {
+    key: "bidPrice",
+    label: "Bid Price",
+    width: "9%",
+    render: (row: any) =>
+      row.bidPrice != null ? row.bidPrice.toLocaleString("en-IN") : "-",
+  },
+
+  {
+    key: "amount",
+    label: "Amount",
+    width: "10%",
+    render: (row: any) =>
+      row.amount != null
+        ? row.amount.toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+          })
+        : "-",
+  },
+
+  {
+    key: "applicationNumber",
+    label: "App No",
+    width: "9%",
+    render: (row: any) => row.applicationNumber || "-",
+  },
+
+  {
+    key: "action",
+    label: "Action",
+    width: "12%",
+    render: (row: any) => (
+      <Box sx={{ display: "flex", gap: "6px" }}>
+        <Box
+          component="button"
+          sx={{
+            border: "none",
+            cursor: "pointer",
+            backgroundColor: "#3aaa55",
+            color: "#fff",
+            borderRadius: "6px",
+            height: "28px",
+            px: "11px",
+            fontSize: "12px",
+            fontWeight: 500,
+          }}
+          onClick={() => handleApproval(row, "YES")}
+        >
+          Yes
+        </Box>
+
+        <Box
+          component="button"
+          sx={{
+            border: "1px solid #dc3545",
+            cursor: "pointer",
+            backgroundColor: "#fff",
+            color: "#dc3545",
+            borderRadius: "6px",
+            height: "28px",
+            px: "11px",
+            fontSize: "12px",
+            fontWeight: 500,
+          }}
+          onClick={() => handleApproval(row, "NO")}
+        >
+          No
+        </Box>
+      </Box>
+    ),
+  },
+];

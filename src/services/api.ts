@@ -27,3 +27,12 @@ export const IPOLoginApi = (payload: any) => {
 export const IPOLoginVerifyOTPApi = (payload: any) => {
   return commonApi("IPO/IPOLoginVerifyOTP", payload, "POST");
 };
+export const GetIPOCategoryListBySymbolApi = (payload: any) => {
+  return commonApi("IPO/GetIPOCategoryListBySymbol", payload, "POST");
+};
+export const GetPendingIPOApprovalsApi = (payload: any) => {
+  return commonApi("IPO/GetPendingIPOApprovals", payload, "POST");
+};
+export const CancelApplicationApi = (payload: any) => {
+  return commonApi("IPO/ApproveCancelApplicationApproval", payload, "POST");
+};

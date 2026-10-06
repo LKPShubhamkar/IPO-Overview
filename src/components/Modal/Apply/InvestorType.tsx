@@ -1,6 +1,28 @@
 import { Box, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { GetIPOCategoryListBySymbolApi } from "../../../services/api";
 
-const InvestorType = ({ category, options, onChange }: any) => {
+const InvestorType = ({ category, data, onChange }: any) => {
+  console.log(category, data, "category,options");
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    const ipoDetails = async () => {
+      try {
+        const payload = {
+          scripID: data?.BSEScriptCode,
+        };
+        const response = await GetIPOCategoryListBySymbolApi(payload);
+        setOptions(response?.data || []);
+        console.log("IPO Order Response:", response);
+      } catch (error) {
+        console.error("Failed to fetch IPO applications:", error);
+      }
+    };
+
+    ipoDetails();
+  }, [data?.BSEScriptCode]);
+
   return (
     <Box sx={{ mt: 1 }}>
       <Typography
@@ -34,8 +56,8 @@ const InvestorType = ({ category, options, onChange }: any) => {
         }}
       >
         {options.map((item: any) => (
-          <option key={item.accessor} value={item.accessor}>
-            {item.name}
+          <option key={item.categoryKey} value={item.categoryKey}>
+            {item.categoryDescription}
           </option>
         ))}
       </Box>

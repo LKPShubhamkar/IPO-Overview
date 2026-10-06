@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { IpoClientDetailsApi, PlaceIpoOrderApi } from "../../../services/api";
-
+import {
+  IpoClientDetailsApi,
+  PlaceIpoOrderApi,
+  myIPOApplicationsApi,
+} from "../../../services/api";
 import InvestorType from "./InvestorType";
 import BidSection from "./BidSection";
 import UpiSection from "./UpiSection";
@@ -15,6 +18,7 @@ const Apply = ({ data, onClose }: any) => {
   const [category, setCategory] = useState("");
   const [bids, setBids] = useState<any[]>([]);
   const [upiId, setUpiId] = useState("");
+  const [isApplied, setIsApplied] = useState(false);
 
   const company = data?.company_headers;
   const ipoOverview = data?.company_ipo_overview;
@@ -88,6 +92,32 @@ const Apply = ({ data, onClose }: any) => {
   }, [auth.encryptedPan]);
 
   useEffect(() => {
+    if (!auth?.encryptedPan || !category) return;
+
+    const checkApplied = async () => {
+      try {
+        const response = await myIPOApplicationsApi({
+          panno: auth.encryptedPan,
+        });
+
+        const applications = response ?? [];
+
+        const applied = applications.some(
+          (item: any) =>
+            item.symbol === data?.stock_data?.BSEScriptCode &&
+            item.category === category,
+        );
+
+        setIsApplied(applied);
+      } catch (error) {
+        console.error("Failed to check IPO application:", error);
+      }
+    };
+
+    checkApplied();
+  }, [auth?.encryptedPan, category, data?.stock_data?.symbol]);
+
+  useEffect(() => {
     if (clientDetails?.upiId) {
       setUpiId(clientDetails.upiId);
     }
@@ -139,9 +169,9 @@ const Apply = ({ data, onClose }: any) => {
       }, 0);
 
       const payload = {
-        scripId: data?.stock_data?.NSEcode ?? "",
+        scripId: data?.stock_data?.BSEScriptCode ?? "",
 
-        applicationNo: "36620085",
+        applicationNo: "36620095",
 
         category: "IND",
 
@@ -292,7 +322,7 @@ const Apply = ({ data, onClose }: any) => {
 
         <InvestorType
           category={category}
-          options={subscriptionHeader}
+          data={data?.stock_data}
           onChange={setCategory}
         />
 
@@ -377,7 +407,7 @@ const Apply = ({ data, onClose }: any) => {
         <Button
           variant="contained"
           onClick={handleApply}
-          disabled={!clientDetails || bids.length === 0}
+          disabled={isApplied || !clientDetails || bids.length === 0}
           sx={{
             flex: 1,
             height: 45,
@@ -393,7 +423,7 @@ const Apply = ({ data, onClose }: any) => {
             },
           }}
         >
-          Apply
+          {isApplied ? "Applied" : "Apply"}
         </Button>
       </Box>
     </Box>
