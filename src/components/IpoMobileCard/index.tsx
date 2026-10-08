@@ -180,7 +180,7 @@ const IpoMobileCard = ({
                 textAlign: "right",
               }}
             >
-              Min Bid
+              Min. Bid Amount
             </Typography>
 
             <Typography

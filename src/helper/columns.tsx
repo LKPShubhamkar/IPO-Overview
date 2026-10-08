@@ -116,14 +116,22 @@ export const ongoingColumns = (navigate: any) => [
   },
 
   {
-    key: "application_amount_min",
-    label: "Min Bid",
-    width: "14%",
+    key: "lower_limit",
+    label: "Lower Limit",
+    width: "12%",
     render: (row: any) =>
-      row.application_amount_min
-        ? row.application_amount_min.toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-          })
+      row.lot_size && row.price_range_min
+        ? `₹${(row.lot_size * row.price_range_min).toLocaleString("en-IN")}`
+        : "-",
+  },
+
+  {
+    key: "upper_limit",
+    label: "Upper Limit",
+    width: "12%",
+    render: (row: any) =>
+      row.lot_size && row.price_range_max
+        ? `₹${(row.lot_size * row.price_range_max).toLocaleString("en-IN")}`
         : "-",
   },
   {
@@ -281,22 +289,30 @@ export const upcomingColumns = (navigate: any) => [
   },
 
   {
+    key: "lower_limit",
+    label: "Lower Limit",
+    width: "12%",
+    render: (row: any) =>
+      row.lot_size && row.price_range_min
+        ? `₹${(row.lot_size * row.price_range_min).toLocaleString("en-IN")}`
+        : "-",
+  },
+
+  {
+    key: "upper_limit",
+    label: "Upper Limit",
+    width: "12%",
+    render: (row: any) =>
+      row.lot_size && row.price_range_max
+        ? `₹${(row.lot_size * row.price_range_max).toLocaleString("en-IN")}`
+        : "-",
+  },
+
+  {
     key: "bid_start_date",
     label: "Starts From",
     width: "13%",
     render: (row: any) => row.bid_start_date || "-",
-  },
-
-  {
-    key: "application_amount_min",
-    label: "Min Bid",
-    width: "14%",
-    render: (row: any) =>
-      row.application_amount_min
-        ? row.application_amount_min.toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-          })
-        : "-",
   },
 
   {
