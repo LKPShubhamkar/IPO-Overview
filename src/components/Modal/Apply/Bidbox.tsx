@@ -18,7 +18,16 @@ const Bidbox = ({
   onRemove,
   onAddBid,
   canAddBid,
+  category,
 }: any) => {
+  const equivalentAmount = lots * lotSize * bidPrice;
+  const maxAmount = category === "HNI" ? 500000 : 200000;
+
+  const maxAffordableLots =
+    lotSize > 0 && bidPrice > 0
+      ? Math.floor(maxAmount / (lotSize * bidPrice))
+      : 0;
+
   return (
     <Box
       sx={{
@@ -123,8 +132,8 @@ const Bidbox = ({
 
           <IconButton
             size="small"
-            disabled={lots >= maxLots}
-            onClick={() => onLotsChange(Math.min(maxLots, lots + 1))}
+            disabled={lots >= maxAffordableLots}
+            onClick={() => onLotsChange(Math.min(maxAffordableLots, lots + 1))}
           >
             <AddIcon sx={{ fontSize: 18 }} />
           </IconButton>
@@ -190,7 +199,15 @@ const Bidbox = ({
             {" - "}₹{priceMax.toFixed(2)}
           </Box>
         </Typography>
-
+        <Typography
+          component="span"
+          sx={{
+            color: "#414451",
+            fontSize: 10,
+          }}
+        >
+          Equivalent Amt ₹{equivalentAmount.toLocaleString("en-IN")}
+        </Typography>
         {canAddBid && (
           <Typography
             onClick={onAddBid}

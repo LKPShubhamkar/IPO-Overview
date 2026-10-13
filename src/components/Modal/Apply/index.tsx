@@ -24,7 +24,10 @@ const Apply = ({ data, onClose }: any) => {
   const ipoOverview = data?.company_ipo_overview;
 
   const lotSize = ipoOverview?.lot_size ?? 0;
-  const maxLots = ipoOverview?.max_lot ?? 1;
+  const maxLots = Math.max(
+    ipoOverview?.max_lot ?? 1,
+    category === "HNI" ? 14 : 1,
+  );
 
   const priceMin = ipoOverview?.price_range_min ?? 0;
   const priceMax = ipoOverview?.price_range_max ?? 0;
@@ -37,12 +40,14 @@ const Apply = ({ data, onClose }: any) => {
   const minLots = isHni ? 14 : 1;
   const categoryMaxAmount = isHni ? 500000 : 200000;
 
-  const categoryMaxLots =
-    lotSize > 0 && priceMax > 0
-      ? Math.floor(categoryMaxAmount / (lotSize * priceMax))
-      : maxLots;
+  const getMaxAffordableLots = (bidPrice: number) => {
+    if (!lotSize || !bidPrice) return 0;
 
-  const effectiveMaxLots = Math.min(maxLots, categoryMaxLots);
+    return Math.min(
+      maxLots,
+      Math.floor(categoryMaxAmount / (lotSize * bidPrice)),
+    );
+  };
 
   useEffect(() => {
     if (subscriptionHeader.length > 0) {
@@ -67,7 +72,10 @@ const Apply = ({ data, onClose }: any) => {
     setBids((previousBids) =>
       previousBids.map((bid) => ({
         ...bid,
-        lots: Math.max(minLots, Math.min(bid.lots, effectiveMaxLots)),
+        lots: Math.max(
+          minLots,
+          Math.min(bid.lots, getMaxAffordableLots(bid.bidPrice)),
+        ),
       })),
     );
   }, [category]);
@@ -115,7 +123,7 @@ const Apply = ({ data, onClose }: any) => {
     };
 
     checkApplied();
-  }, [auth?.encryptedPan, data?.stock_data?.symbol]);
+  }, [auth?.encryptedPan, category, data?.stock_data?.symbol]);
 
   useEffect(() => {
     if (clientDetails?.upiId) {
@@ -125,26 +133,34 @@ const Apply = ({ data, onClose }: any) => {
 
   const updateBid = (index: number, field: string, value: number) => {
     setBids((previousBids) =>
-      previousBids.map((bid, currentIndex) =>
-        currentIndex === index
-          ? {
-              ...bid,
-              [field]: value,
-            }
-          : bid,
-      ),
+      previousBids.map((bid, currentIndex) => {
+        if (currentIndex !== index) return bid;
+
+        const updatedBid = { ...bid, [field]: value };
+
+        if (field === "bidPrice") {
+          updatedBid.lots = Math.max(
+            minLots,
+            Math.min(bid.lots, getMaxAffordableLots(value)),
+          );
+        }
+
+        return updatedBid;
+      }),
     );
   };
 
   const addBid = () => {
     if (bids.length >= 3) return;
 
+    const lots = minLots;
+    const amount = lots * lotSize * defaultBidPrice;
+
+    if (amount >= categoryMaxAmount) return;
+
     setBids((previousBids) => [
       ...previousBids,
-      {
-        lots: Math.min(minLots, effectiveMaxLots),
-        bidPrice: defaultBidPrice,
-      },
+      { lots, bidPrice: defaultBidPrice },
     ]);
   };
 
@@ -156,22 +172,23 @@ const Apply = ({ data, onClose }: any) => {
     );
   };
 
-  const equivalentAmount = bids.reduce((total, bid) => {
-    return total + bid.lots * lotSize * bid.bidPrice;
-  }, 0);
-
-  const maxAmount = Math.min(maxLots * lotSize * priceMax, categoryMaxAmount);
-
   const handleApply = async () => {
     try {
-      const totalAmount = bids.reduce((total, bid) => {
-        return total + bid.lots * lotSize * bid.bidPrice;
-      }, 0);
+      const invalidBid = bids.some(
+        (bid) => bid.lots * lotSize * bid.bidPrice >= categoryMaxAmount,
+      );
+
+      if (invalidBid) return;
+
+      const totalAmount = bids.reduce(
+        (total, bid) => total + bid.lots * lotSize * bid.bidPrice,
+        0,
+      );
 
       const payload = {
         scripId: data?.stock_data?.BSEScriptCode ?? "",
 
-        applicationNo: "36620095",
+        applicationNo: "",
 
         category: "IND",
 
@@ -331,7 +348,8 @@ const Apply = ({ data, onClose }: any) => {
         <BidSection
           bids={bids}
           lotSize={lotSize}
-          maxLots={effectiveMaxLots}
+          category={category}
+          maxLots={maxLots}
           minLots={minLots}
           priceMin={priceMin}
           priceMax={priceMax}
@@ -388,19 +406,19 @@ const Apply = ({ data, onClose }: any) => {
           gap: 4,
         }}
       >
-        <Box sx={{ width: 110 }}>
+        {/* <Box sx={{ width: 110 }}>
           <Typography sx={bottomLabel}>Equivalent Amt</Typography>
 
           <Typography sx={bottomValue}>
             ₹{equivalentAmount.toLocaleString("en-IN")}
           </Typography>
-        </Box>
+        </Box> */}
 
-        <Box sx={{ width: 120 }}>
+        <Box sx={{ width: 300 }}>
           <Typography sx={bottomLabel}>Max Amount</Typography>
 
           <Typography sx={bottomValue}>
-            ₹{maxAmount.toLocaleString("en-IN")}
+            ₹{categoryMaxAmount.toLocaleString("en-IN")}
           </Typography>
         </Box>
 

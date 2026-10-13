@@ -12,6 +12,7 @@ const BidSection = ({
   onUpdate,
   onAddBid,
   onRemoveBid,
+  category,
 }: any) => {
   return (
     <Box
@@ -33,6 +34,7 @@ const BidSection = ({
           bidPrice={bid.bidPrice}
           priceMin={priceMin}
           priceMax={priceMax}
+          category={category}
           onLotsChange={(value: number) => onUpdate(index, "lots", value)}
           onPriceChange={(value: number) => onUpdate(index, "bidPrice", value)}
           onRemove={() => onRemoveBid(index)}

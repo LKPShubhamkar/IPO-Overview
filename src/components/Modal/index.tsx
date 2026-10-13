@@ -38,7 +38,7 @@ const CommonModal = ({
         return (
           <Cancel
             onClose={onClose}
-            onConfirm={() => {
+            onCancel={() => {
               console.log("Cancel IPO confirmed");
               onClose();
             }}
