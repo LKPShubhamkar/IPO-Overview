@@ -180,7 +180,7 @@ const isPreApplyEligible = (openDate: any) => {
   const diffInDays =
     (ipoOpenDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
 
-  return diffInDays >= 1 && diffInDays <= 2;
+  return diffInDays >= 1 && diffInDays <= 1;
 };
 export const upcomingColumns = (navigate: any) => [
   {

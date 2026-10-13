@@ -32,7 +32,7 @@ const Apply = ({ data, onClose }: any) => {
   const defaultBidPrice =
     ipoOverview?.issue_price ?? ipoOverview?.price_range_max ?? 0;
 
-  const isHni = category === "non_institutional_investor";
+  const isHni = category === "HNI";
 
   const minLots = isHni ? 14 : 1;
   const categoryMaxAmount = isHni ? 500000 : 200000;
@@ -115,7 +115,7 @@ const Apply = ({ data, onClose }: any) => {
     };
 
     checkApplied();
-  }, [auth?.encryptedPan, category, data?.stock_data?.symbol]);
+  }, [auth?.encryptedPan, data?.stock_data?.symbol]);
 
   useEffect(() => {
     if (clientDetails?.upiId) {

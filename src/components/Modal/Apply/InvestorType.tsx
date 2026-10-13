@@ -56,7 +56,7 @@ const InvestorType = ({ category, data, onChange }: any) => {
         }}
       >
         {options.map((item: any) => (
-          <option key={item.categoryKey} value={item.categoryKey}>
+          <option key={item.rowID + item.categoryKey} value={item.categoryKey}>
             {item.categoryDescription}
           </option>
         ))}
