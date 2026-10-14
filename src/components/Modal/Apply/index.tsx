@@ -13,7 +13,6 @@ import { useAuth } from "../../../context/AuthContext";
 
 const Apply = ({ data, onClose }: any) => {
   const [clientDetails, setClientDetails] = useState<any>(null);
-  const subscriptionHeader = data?.subscription_rate?.subscription_header ?? [];
   const { auth } = useAuth();
   const [category, setCategory] = useState("");
   const [bids, setBids] = useState<any[]>([]);
@@ -48,12 +47,6 @@ const Apply = ({ data, onClose }: any) => {
       Math.floor(categoryMaxAmount / (lotSize * bidPrice)),
     );
   };
-
-  useEffect(() => {
-    if (subscriptionHeader.length > 0) {
-      setCategory(subscriptionHeader[0]?.accessor);
-    }
-  }, [data]);
 
   useEffect(() => {
     if (bids.length === 0 && ipoOverview) {
@@ -190,7 +183,7 @@ const Apply = ({ data, onClose }: any) => {
 
         applicationNo: "",
 
-        category: "IND",
+        category: category ?? "",
 
         applicantName: clientDetails?.clientName ?? "",
 
@@ -250,10 +243,13 @@ const Apply = ({ data, onClose }: any) => {
       console.log("IPO Order Payload:", payload);
 
       const response = await PlaceIpoOrderApi(payload);
+      alert(response?.message);
 
       console.log("IPO Order Response:", response);
     } catch (error) {
       console.error("Failed to place IPO order:", error);
+    } finally {
+      onClose();
     }
   };
 

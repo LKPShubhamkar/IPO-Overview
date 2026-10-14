@@ -173,55 +173,59 @@ const AppliedMobile = ({ data, onCancel, onViewDetail }: any) => {
           </Box>
 
           {/* Actions */}
-          <Box
-            sx={{
-              backgroundColor: "#e5edf2",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "12px",
-              py: "7px",
-            }}
-          >
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => onCancel(item)}
-              sx={{
-                height: "24px",
-                px: "10px",
-                textTransform: "none",
-                fontSize: "10px",
-                borderRadius: "6px",
-                color: "#0066b3",
-                borderColor: "#0066b3",
-                backgroundColor: "#fff",
-              }}
-            >
-              Cancel IPO
-            </Button>
+          {item?.endDate &&
+            new Date(item.endDate).setHours(0, 0, 0, 0) >=
+              new Date().setHours(0, 0, 0, 0) && (
+              <Box
+                sx={{
+                  backgroundColor: "#e5edf2",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "12px",
+                  py: "7px",
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => onCancel(item)}
+                  sx={{
+                    height: "24px",
+                    px: "10px",
+                    textTransform: "none",
+                    fontSize: "10px",
+                    borderRadius: "6px",
+                    color: "#0066b3",
+                    borderColor: "#0066b3",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  Cancel IPO
+                </Button>
 
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => onViewDetail(item)}
-              sx={{
-                height: "24px",
-                px: "10px",
-                textTransform: "none",
-                fontSize: "10px",
-                borderRadius: "6px",
-                backgroundColor: "#0066b3",
-                boxShadow: "none",
-                "&:hover": {
-                  backgroundColor: "#0066b3",
-                  boxShadow: "none",
-                },
-              }}
-            >
-              View Detail
-            </Button>
-          </Box>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={() => onViewDetail(item)}
+                  sx={{
+                    height: "24px",
+                    px: "10px",
+                    textTransform: "none",
+                    fontSize: "10px",
+                    borderRadius: "6px",
+                    backgroundColor: "#0066b3",
+                    boxShadow: "none",
+                    "&:hover": {
+                      backgroundColor: "#0066b3",
+                      boxShadow: "none",
+                    },
+                  }}
+                >
+                  View Detail
+                </Button>
+              </Box>
+            )}
         </Box>
       ))}
     </Box>

@@ -35,15 +35,7 @@ const CommonModal = ({
         return <ViewDetails onClose={onClose} propsData={data} />;
 
       case "cancel":
-        return (
-          <Cancel
-            onClose={onClose}
-            onCancel={() => {
-              console.log("Cancel IPO confirmed");
-              onClose();
-            }}
-          />
-        );
+        return <Cancel onClose={onClose} data={data} />;
       case "confirmation":
         return (
           <Confirmation onClose={onClose} data={data} onConfirm={onConfirm} />

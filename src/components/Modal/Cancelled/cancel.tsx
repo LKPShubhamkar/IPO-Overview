@@ -1,6 +1,58 @@
 import { Box, Button, Typography } from "@mui/material";
+import { PlaceIpoOrderApi } from "../../../services/api";
 
-const Cancel = ({ onClose, onConfirm }: any) => {
+const Cancel = ({ onClose, data }: any) => {
+  const handleCancel = async () => {
+    console.log(data, "cmpare");
+
+    try {
+      const payload = {
+        scripId: data?.symbol ?? "",
+        applicationNo: String(data?.applicationNumber ?? ""),
+        category: data?.category ?? "IND",
+        applicantName: data?.clientName ?? "",
+        depository: data?.depository,
+        dpid: "0",
+        clientBenfId: data?.clientBOID ?? "1203000001123371",
+        chequeReceivedFlag: "Y",
+        chequeAmount: Number(data?.amount ?? 0).toFixed(2),
+        panNo: data?.panNo ?? "",
+        bankName: "8888",
+        location: "UPIIDL",
+        accountNumberUPIID: data?.upiid ?? "",
+        ifscCode: "",
+        referenceNo: "",
+        asbaupiid: "1",
+        exchange: "BSE", //Change this to "NSE" if needed
+        repatriationType: null,
+        clientCode: null,
+        dpcode: "",
+        iposbCode: null,
+        refID: 0,
+        batch: 0,
+
+        bids: (data?.bidList ?? []).map((bid: any) => ({
+          bidId: String(bid?.bidID ?? ""),
+          quantity: String(bid?.bidQty ?? 0),
+          rate: String(bid?.bidPrice ?? 0),
+          cutoffFlag: "0",
+          orderNo: String(bid?.orderNo ?? ""),
+          actionCode: "D",
+        })),
+      };
+
+      console.log("IPO Cancellation Payload:", payload);
+
+      const response = await PlaceIpoOrderApi(payload);
+
+      if (response) {
+        console.log("IPO cancellation successful:", response);
+        onClose();
+      }
+    } catch (error) {
+      console.error("IPO cancellation failed:", error);
+    }
+  };
   return (
     <Box
       sx={{
@@ -139,7 +191,7 @@ const Cancel = ({ onClose, onConfirm }: any) => {
 
         <Button
           fullWidth
-          onClick={onConfirm}
+          onClick={handleCancel}
           sx={{
             height: 38,
             textTransform: "none",

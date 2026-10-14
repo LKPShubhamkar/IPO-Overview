@@ -125,8 +125,8 @@ const MainLayout = () => {
           mt: 1.5,
           backgroundColor: "#fff",
           minHeight: "80%",
-          display: "flex",
-          justifyContent: "center",
+          // display: "flex",
+          // justifyContent: "center",
         }}
       >
         {loading ? (

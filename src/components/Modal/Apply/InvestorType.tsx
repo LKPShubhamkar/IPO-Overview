@@ -13,8 +13,14 @@ const InvestorType = ({ category, data, onChange }: any) => {
           scripID: data?.BSEScriptCode,
         };
         const response = await GetIPOCategoryListBySymbolApi(payload);
-        setOptions(response?.data || []);
-        console.log("IPO Order Response:", response);
+        const categoryOptions = response?.data || [];
+        setOptions(categoryOptions);
+        if (
+          categoryOptions.length > 0 &&
+          !categoryOptions.some((item: any) => item.categoryKey === category)
+        ) {
+          onChange(categoryOptions[0].categoryKey);
+        }
       } catch (error) {
         console.error("Failed to fetch IPO applications:", error);
       }
