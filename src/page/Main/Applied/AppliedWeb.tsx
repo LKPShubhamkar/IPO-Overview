@@ -179,7 +179,7 @@ const AppliedWeb = ({ data, onCancel, onViewDetail }: any) => {
               >
                 {item.bidList?.map((bid: any, index: number) => (
                   <BidCard
-                    key={index}
+                    key={`${bid.bidID}-${index}`}
                     bidNumber={index + 1}
                     bidQty={bid.bidQty}
                     bidPrice={bid.bidPrice}
