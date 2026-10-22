@@ -181,7 +181,7 @@ const Apply = ({ data, onClose }: any) => {
       const payload = {
         scripId: data?.stock_data?.BSEScriptCode ?? "",
 
-        applicationNo: "",
+        applicationNo: "0",
 
         category: category ?? "",
 
@@ -203,7 +203,7 @@ const Apply = ({ data, onClose }: any) => {
 
         location: "UPIIDL",
 
-        accountNumberUPIID: clientDetails?.upiId ?? "",
+        accountNumberUPIID: upiId ?? clientDetails?.upiId,
 
         ifscCode: "",
 
@@ -215,7 +215,7 @@ const Apply = ({ data, onClose }: any) => {
 
         repatriationType: null,
 
-        clientCode: null,
+        clientCode: clientDetails?.clientCode ?? "",
 
         dpcode: "",
 

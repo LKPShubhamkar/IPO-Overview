@@ -1,7 +1,31 @@
 import { Box, Button, Typography } from "@mui/material";
-import { PlaceIpoOrderApi } from "../../../services/api";
+import { IpoClientDetailsApi, PlaceIpoOrderApi } from "../../../services/api";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
 
 const Cancel = ({ onClose, data }: any) => {
+  const [clientDetails, setClientDetails] = useState<any>(null);
+  const { auth } = useAuth();
+
+  useEffect(() => {
+    const getIpoData = async () => {
+      try {
+        const payload = {
+          panno: auth.encryptedPan,
+        };
+        const response = await IpoClientDetailsApi(payload);
+
+        console.log(response, "response modal");
+
+        setClientDetails(response?.data ?? response?.body);
+      } catch (error) {
+        console.error("Failed to fetch client details:", error);
+      }
+    };
+
+    getIpoData();
+  }, [auth.encryptedPan]);
+
   const handleCancel = async () => {
     console.log(data, "cmpare");
 
@@ -10,22 +34,22 @@ const Cancel = ({ onClose, data }: any) => {
         scripId: data?.symbol ?? "",
         applicationNo: String(data?.applicationNumber ?? ""),
         category: data?.category ?? "IND",
-        applicantName: data?.clientName ?? "",
+        applicantName: clientDetails?.clientName ?? "",
         depository: data?.depository,
         dpid: "0",
-        clientBenfId: data?.clientBOID ?? "1203000001123371",
+        clientBenfId: clientDetails?.boId ?? "",
         chequeReceivedFlag: "Y",
         chequeAmount: Number(data?.amount ?? 0).toFixed(2),
         panNo: data?.panNo ?? "",
-        bankName: "8888",
-        location: "UPIIDL",
+        bankName: ".",
+        location: ".",
         accountNumberUPIID: data?.upiid ?? "",
         ifscCode: "",
         referenceNo: "",
         asbaupiid: "1",
         exchange: "BSE", //Change this to "NSE" if needed
         repatriationType: null,
-        clientCode: null,
+        clientCode: clientDetails?.clientCode ?? null,
         dpcode: "",
         iposbCode: null,
         refID: 0,
@@ -64,7 +88,7 @@ const Cancel = ({ onClose, data }: any) => {
       }}
     >
       {/* Company */}
-      <Box
+      {/* <Box
         sx={{
           border: "1px solid #e5e5e5",
           borderRadius: "9px",
@@ -119,7 +143,7 @@ const Cancel = ({ onClose, data }: any) => {
             </Typography>
           </Box>
         </Box>
-      </Box>
+      </Box> */}
 
       {/* Cancel Icon */}
       <Box

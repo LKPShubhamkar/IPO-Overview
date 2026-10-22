@@ -19,6 +19,7 @@ const MainLayout = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (tab === "approved" || tab === "applied") return;
     const getIpoData = async () => {
       try {
         const response = await fetchIpoApi();
@@ -29,7 +30,7 @@ const MainLayout = () => {
     };
 
     getIpoData();
-  }, []);
+  }, [tab]);
 
   useEffect(() => {
     if (!isSSO) {
