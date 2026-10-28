@@ -627,12 +627,12 @@ export const approvedColumns = (handleApproval: any) => [
         : "-",
   },
 
-  {
-    key: "applicationNumber",
-    label: "App No",
-    width: "9%",
-    render: (row: any) => row.applicationNumber || "-",
-  },
+  // {
+  //   key: "applicationNumber",
+  //   label: "App No",
+  //   width: "9%",
+  //   render: (row: any) => row.applicationNumber || "-",
+  // },
 
   {
     key: "action",

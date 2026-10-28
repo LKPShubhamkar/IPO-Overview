@@ -3,7 +3,7 @@ import { IpoClientDetailsApi, PlaceIpoOrderApi } from "../../../services/api";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 
-const Cancel = ({ onClose, data }: any) => {
+const Cancel = ({ onClose, data, onConfirm }: any) => {
   const [clientDetails, setClientDetails] = useState<any>(null);
   const { auth } = useAuth();
 
@@ -71,6 +71,7 @@ const Cancel = ({ onClose, data }: any) => {
 
       if (response) {
         console.log("IPO cancellation successful:", response);
+        onConfirm();
         onClose();
       }
     } catch (error) {

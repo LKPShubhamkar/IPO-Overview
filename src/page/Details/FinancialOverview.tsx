@@ -24,9 +24,11 @@ const FinancialOverview = ({ data }: any) => {
       const cells = Array.from(row.querySelectorAll("td")).map(
         (cell) => cell.textContent?.trim() ?? "",
       );
+      const parseNumber = (value: string | undefined | null) => {
+        if (!value) return 0;
 
-      const parseNumber = (value: any) =>
-        Number(value.replace(/,/g, "").replace("%", "")) || 0;
+        return Number(value.replace(/,/g, "").replace(/%/g, "").trim()) || 0;
+      };
 
       return {
         period: cells[0],

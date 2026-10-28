@@ -538,7 +538,7 @@ const ViewDetails = ({
             value={ipo.clientbenfid || "-"}
           />
 
-          <SummaryItem label="DP ID" value={ipo.dpid || "-----"} />
+          {/* <SummaryItem label="DP ID" value={ipo.dpid || "-----"} /> */}
 
           <SummaryItem label="Client PAN" value={ipo.panno || "-"} />
         </Box>
