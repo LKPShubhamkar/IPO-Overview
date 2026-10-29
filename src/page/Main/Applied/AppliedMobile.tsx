@@ -53,12 +53,18 @@ const AppliedMobile = ({ data, onCancel, onViewDetail }: any) => {
                     px: "4px",
                     fontSize: "9px",
                     lineHeight: "13px",
-                    color: "#3aaa55",
-                    backgroundColor: "#eaf8ed",
+                    color:
+                      item.applicationStatus === "Cancelled"
+                        ? "#d32f2f"
+                        : "#3aaa55",
+                    backgroundColor:
+                      item.applicationStatus === "Cancelled"
+                        ? "#fdeaea"
+                        : "#eaf8ed",
                     borderRadius: "2px",
                   }}
                 >
-                  Applied
+                  {item.applicationStatus}
                 </Typography>
               </Box>
             </Box>

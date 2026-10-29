@@ -76,7 +76,26 @@ const AppliedWeb = ({ data, onCancel, onViewDetail }: any) => {
                 >
                   {item.symbol}
                 </Typography>
-
+                <Typography
+                  sx={{
+                    display: "inline-block",
+                    mt: "2px",
+                    px: "4px",
+                    fontSize: "9px",
+                    lineHeight: "13px",
+                    color:
+                      item.applicationStatus === "Cancelled"
+                        ? "#d32f2f"
+                        : "#3aaa55",
+                    backgroundColor:
+                      item.applicationStatus === "Cancelled"
+                        ? "#fdeaea"
+                        : "#eaf8ed",
+                    borderRadius: "2px",
+                  }}
+                >
+                  {item.applicationStatus}
+                </Typography>
                 <Typography
                   sx={{
                     display: "inline-block",
