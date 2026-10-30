@@ -68,7 +68,7 @@ const AppliedWeb = ({ data, onCancel, onViewDetail }: any) => {
               <Box>
                 <Typography
                   sx={{
-                    fontSize: "14px",
+                    fontSize: "17px",
                     fontWeight: 500,
                     color: "#353844",
                     lineHeight: "18px",
@@ -81,7 +81,7 @@ const AppliedWeb = ({ data, onCancel, onViewDetail }: any) => {
                     display: "inline-block",
                     mt: "2px",
                     px: "4px",
-                    fontSize: "9px",
+                    fontSize: "11px",
                     lineHeight: "13px",
                     color:
                       item.applicationStatus === "Cancelled"
@@ -220,22 +220,24 @@ const AppliedWeb = ({ data, onCancel, onViewDetail }: any) => {
                     mt: "2px",
                   }}
                 >
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() => onCancel(item)}
-                    sx={{
-                      height: "25px",
-                      px: "10px",
-                      textTransform: "none",
-                      fontSize: "11px",
-                      borderRadius: "6px",
-                      color: "#0066b3",
-                      borderColor: "#0066b3",
-                    }}
-                  >
-                    Cancel IPO
-                  </Button>
+                  {item.applicationStatus !== "Cancelled" && (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => onCancel(item)}
+                      sx={{
+                        height: "25px",
+                        px: "10px",
+                        textTransform: "none",
+                        fontSize: "11px",
+                        borderRadius: "6px",
+                        color: "#0066b3",
+                        borderColor: "#0066b3",
+                      }}
+                    >
+                      Cancel IPO
+                    </Button>
+                  )}
 
                   <Button
                     variant="contained"

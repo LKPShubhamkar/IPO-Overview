@@ -34,7 +34,14 @@ const AppliedMobile = ({ data, onCancel, onViewDetail }: any) => {
                 borderBottom: "1px solid #eeeeee",
               }}
             >
-              <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
                 <Typography
                   sx={{
                     fontSize: "13px",
@@ -192,23 +199,25 @@ const AppliedMobile = ({ data, onCancel, onViewDetail }: any) => {
                   py: "7px",
                 }}
               >
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => onCancel(item)}
-                  sx={{
-                    height: "24px",
-                    px: "10px",
-                    textTransform: "none",
-                    fontSize: "10px",
-                    borderRadius: "6px",
-                    color: "#0066b3",
-                    borderColor: "#0066b3",
-                    backgroundColor: "#fff",
-                  }}
-                >
-                  Cancel IPO
-                </Button>
+                {item.applicationStatus !== "Cancelled" && (
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => onCancel(item)}
+                    sx={{
+                      height: "24px",
+                      px: "10px",
+                      textTransform: "none",
+                      fontSize: "10px",
+                      borderRadius: "6px",
+                      color: "#0066b3",
+                      borderColor: "#0066b3",
+                      backgroundColor: "#fff",
+                    }}
+                  >
+                    Cancel IPO
+                  </Button>
+                )}
 
                 <Button
                   variant="contained"
